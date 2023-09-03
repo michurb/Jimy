@@ -1,4 +1,14 @@
+using Jimy.Api.Data;
+using Jimy.Api.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//PG connection
+builder.Services.AddDbContext<JimyDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("JimyConnection")));
+builder.Services.AddScoped<ExercisesService>();
+
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
