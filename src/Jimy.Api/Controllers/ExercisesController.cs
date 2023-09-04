@@ -1,3 +1,4 @@
+using Jimy.Api.Entities;
 using Jimy.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 

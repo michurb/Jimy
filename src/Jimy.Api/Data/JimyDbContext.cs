@@ -1,4 +1,5 @@
 using System.Data.Common;
+using Jimy.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jimy.Api.Data;
