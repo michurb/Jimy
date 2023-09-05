@@ -16,8 +16,8 @@ public class ExerciseDetails
     public int TrainingSessionId { get; set; } // Foreign Key
     [ForeignKey(nameof(global::Jimy.Api.Entities.Exercise))]
     public int ExerciseId { get; set; } // Foreign Key
-    public int Repetitions { get; set; }
-    public int Sets { get; set; }
+    public int Repetition { get; set; }
+    public int Set { get; set; }
 
     public Exercise Exercise { get; set; }
     public TrainingSession TrainingSession { get; set; }
