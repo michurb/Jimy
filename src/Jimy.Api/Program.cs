@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<JimyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("JimyConnection")));
 builder.Services.AddScoped<ExercisesService>();
-builder.Services.AddScoped<TrainingSessionSerivce>();
+builder.Services.AddScoped<TrainingSessionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();

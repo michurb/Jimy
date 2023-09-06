@@ -11,5 +11,5 @@ public class TrainingSession
     [MaxLength(100)]
     public string Name { get; set; }
 
-    public ICollection<ExerciseDetails> Trainings { get; set; }
+    public ICollection<ExerciseDetails> Trainings => new List<ExerciseDetails>();
 }

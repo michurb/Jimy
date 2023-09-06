@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jimy.Api.Services;
 
-public class TrainingSessionSerivce {
+public class TrainingSessionService {
     private readonly JimyDbContext _context;
 
-    public TrainingSessionSerivce(JimyDbContext context)
+    public TrainingSessionService(JimyDbContext context)
     {
         _context = context;
     }
@@ -23,6 +23,7 @@ public class TrainingSessionSerivce {
     {
         return _context.TrainingSessions
             .Include(ts => ts.Trainings)
+            .ThenInclude(ts => ts.Exercise)
             .First(ts => ts.Id == id);
     }
     
@@ -69,7 +70,6 @@ public class TrainingSessionSerivce {
         {
             throw new Exception("Exercise details not found");
         }
-        existingDetails.Name = existingDetails.Name;
         existingDetails.Repetition = existingDetails.Repetition;
         existingDetails.Set = existingDetails.Set;
         

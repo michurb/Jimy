@@ -10,20 +10,20 @@ namespace Jimy.Api.Controllers;
 [Route("trainingsession")]
 public class TrainingSessionsController : ControllerBase
 {
-    private readonly TrainingSessionSerivce _trainingSessionSerivce;
+    private readonly TrainingSessionService _trainingSessionService;
 
-    public TrainingSessionsController(TrainingSessionSerivce trainingSessionSerivce)
+    public TrainingSessionsController(TrainingSessionService trainingSessionService)
     {
-        _trainingSessionSerivce = trainingSessionSerivce;
+        _trainingSessionService = trainingSessionService;
     }
     
     [HttpGet]
-    public ActionResult<IEnumerable<TrainingSession>> Get() => Ok(_trainingSessionSerivce.GetAll());
+    public ActionResult<IEnumerable<TrainingSession>> Get() => Ok(_trainingSessionService.GetAll());
     
     [HttpGet("{id}")]
     public ActionResult<TrainingSession> GetBy(int id)
     {
-        var trainingSession = _trainingSessionSerivce.GetById(id);
+        var trainingSession = _trainingSessionService.GetById(id);
         if(trainingSession is null)
         {
             return NotFound();
@@ -38,7 +38,7 @@ public class TrainingSessionsController : ControllerBase
         {
             return BadRequest();
         }
-        _trainingSessionSerivce.Update(session);
+        _trainingSessionService.Update(session);
         return NoContent();
     }
     
@@ -46,17 +46,22 @@ public class TrainingSessionsController : ControllerBase
     [HttpPost]
     public ActionResult<TrainingSession> Post(TrainingSession session)
     {
-        _trainingSessionSerivce.AddSession(session);
-        return CreatedAtAction(nameof(Get), new {id = _trainingSessionSerivce.GetById(session.Id),session});
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        _trainingSessionService.AddSession(session);
+        return CreatedAtAction(nameof(Get), new {id = _trainingSessionService.GetById(session.Id),session});
         
     }
     
     [HttpPost("{sessionId}/excercisedetails")]
-    public IActionResult AddExerciseDetailsToSession (int seessionId, ExerciseDetails exerciseDetails)
+    public IActionResult AddExerciseDetailsToSession (int sessionId, [FromBody]ExerciseDetails exerciseDetails)
     {
         try
         {
-            _trainingSessionSerivce.AddExerciseDetailsToSession(seessionId, exerciseDetails);
+            _trainingSessionService.AddExerciseDetailsToSession(sessionId, exerciseDetails);
             return Ok();
         }
         catch (Exception e)
@@ -68,12 +73,12 @@ public class TrainingSessionsController : ControllerBase
     [HttpDelete]
     public IActionResult Delete(int id)
     {
-        var session = _trainingSessionSerivce.GetById(id);
+        var session = _trainingSessionService.GetById(id);
         if(session is null)
         {
             return NotFound();
         }
-        _trainingSessionSerivce.Delete(id);
+        _trainingSessionService.Delete(id);
         return NoContent();
     }
     
@@ -88,7 +93,7 @@ public class TrainingSessionsController : ControllerBase
             {
                 return BadRequest();
             }
-            _trainingSessionSerivce.UpdateExerciseDetails(exerciseDetails);
+            _trainingSessionService.UpdateExerciseDetails(exerciseDetails);
             return NoContent();    
         }
         catch(Exception e)
@@ -102,7 +107,7 @@ public class TrainingSessionsController : ControllerBase
     {
         try
         {
-            _trainingSessionSerivce.DeleteExerciseDetails(detailsId);
+            _trainingSessionService.DeleteExerciseDetails(detailsId);
             return NoContent();
         }
         catch (Exception e)

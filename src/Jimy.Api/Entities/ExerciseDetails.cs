@@ -9,12 +9,10 @@ public class ExerciseDetails
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    [Required]
-    [MaxLength(30)]
-    public string Name { get; set; }
+    [NotMapped] public string Name => Exercise?.Name;
     [ForeignKey(nameof(TrainingSession))]
     public int TrainingSessionId { get; set; } // Foreign Key
-    [ForeignKey(nameof(global::Jimy.Api.Entities.Exercise))]
+    [ForeignKey(nameof(Exercise))]
     public int ExerciseId { get; set; } // Foreign Key
     public int Repetition { get; set; }
     public int Set { get; set; }
