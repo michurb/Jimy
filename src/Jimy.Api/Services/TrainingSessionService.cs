@@ -16,6 +16,7 @@ public class TrainingSessionService {
     {
         return _context.TrainingSessions
             .Include(ts => ts.Trainings)
+            .ThenInclude(t => t.Exercise)
             .ToList();
     }
     

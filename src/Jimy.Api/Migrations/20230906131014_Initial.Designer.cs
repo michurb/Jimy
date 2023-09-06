@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jimy.Api.Migrations
 {
     [DbContext(typeof(JimyDbContext))]
-    [Migration("20230905095554_Initial")]
+    [Migration("20230906131014_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,11 +51,6 @@ namespace Jimy.Api.Migrations
 
                     b.Property<int>("ExerciseId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)");
 
                     b.Property<int>("Repetition")
                         .HasColumnType("integer");
