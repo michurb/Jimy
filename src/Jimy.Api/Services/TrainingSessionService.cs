@@ -52,15 +52,28 @@ public class TrainingSessionService {
     }
     
     //Below there is CRUD for Exercise details
-    public void AddExerciseDetailsToSession(int sessionId, ExerciseDetails exerciseDetails)
+    public void AddExerciseToSession(int sessionId, int exerciseId, int repetition, int set)
     {
-        var session = GetById(sessionId);
-        if(session is null)
+        var session = _context.TrainingSessions.Find(sessionId);
+        if(session == null)
         {
             throw new Exception("Training session not found");
         }
-        exerciseDetails.TrainingSessionId = sessionId;
-        _context.ExerciseDetails.Add(exerciseDetails);
+
+        var exercise = _context.Exercises.Find(exerciseId);
+        if(exercise == null)
+        {
+            throw new Exception("Exercise not found");
+        }
+
+        var exerciseDetails = new ExerciseDetails
+        {
+            ExerciseId = exerciseId,
+            Repetition = repetition,
+            Set = set
+        };
+
+        session.Trainings.Add(exerciseDetails);
         _context.SaveChanges();
     }
     

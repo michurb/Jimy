@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Transactions;
+using Jimy.Api.DTO;
 using Jimy.Api.Entities;
 using Jimy.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -57,11 +58,12 @@ public class TrainingSessionsController : ControllerBase
     }
     
     [HttpPost("{sessionId}/excercisedetails")]
-    public IActionResult AddExerciseDetailsToSession (int sessionId, [FromBody]ExerciseDetails exerciseDetails)
+    public IActionResult AddExerciseDetailsToSession (int sessionId, [FromBody]ExerciseToAddDto exerciseToAdd)
+
     {
         try
         {
-            _trainingSessionService.AddExerciseDetailsToSession(sessionId, exerciseDetails);
+            _trainingSessionService.AddExerciseToSession(sessionId, exerciseToAdd.ExerciseId, exerciseToAdd.Repetition, exerciseToAdd.Set);
             return Ok();
         }
         catch (Exception e)

@@ -73,15 +73,11 @@ namespace Jimy.Tests.Unit
                 };
                 _trainingSessionService.AddSession(trainingSession);
 
-                var exerciseDetails = new ExerciseDetails
-                {
-                    ExerciseId = exercise.Id,
-                    Repetition = 1,
-                    Set = 1
-                };
+                int reps = 10;
+                int set = 10;
 
                 // Act
-                _trainingSessionService.AddExerciseDetailsToSession(trainingSession.Id, exerciseDetails);
+                _trainingSessionService.AddExerciseToSession(trainingSession.Id, exercise.Id, reps, set);
 
                 // Assert
                 var addedTrainingSession = _trainingSessionService.GetById(trainingSession.Id);
