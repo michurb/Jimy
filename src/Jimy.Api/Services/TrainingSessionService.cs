@@ -77,15 +77,15 @@ public class TrainingSessionService {
         _context.SaveChanges();
     }
     
-    public void UpdateExerciseDetails(ExerciseDetails exerciseDetails)
+    public void UpdateExerciseDetails(int exerciseId, int repetition, int set)
     {
-        var existingDetails = _context.ExerciseDetails.First(ed => ed.Id == exerciseDetails.Id);
+        var existingDetails = _context.ExerciseDetails.First(ed => ed.Id == exerciseId);
         if(existingDetails is null)
         {
             throw new Exception("Exercise details not found");
         }
-        existingDetails.Repetition = existingDetails.Repetition;
-        existingDetails.Set = existingDetails.Set;
+        existingDetails.Repetition = repetition;
+        existingDetails.Set = set;
         
         _context.Entry(existingDetails).State = EntityState.Modified;
         _context.SaveChanges();

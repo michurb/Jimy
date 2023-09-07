@@ -87,15 +87,15 @@ public class TrainingSessionsController : ControllerBase
     //Handling Exercise details
     
     [HttpPut("{sessionId}/exercisedetails/{detailsId}")]
-    public IActionResult PutExerciseDetails(int sessionId, int detailsId, ExerciseDetails exerciseDetails)
+    public IActionResult PutExerciseDetails(int sessionId, int detailsId, ExerciseToAddDto exerciseDetails)
     {
         try
         {
-            if(exerciseDetails.Id != detailsId)
+            if(exerciseDetails.ExerciseId != detailsId)
             {
                 return BadRequest();
             }
-            _trainingSessionService.UpdateExerciseDetails(exerciseDetails);
+            _trainingSessionService.UpdateExerciseDetails(detailsId, exerciseDetails.Repetition, exerciseDetails.Set);
             return NoContent();    
         }
         catch(Exception e)
