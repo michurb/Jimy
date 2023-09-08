@@ -6,7 +6,7 @@ public class TrainingSession
 {
     public TrainingSession()
     {
-        Trainings = new List<ExerciseDetails>();
+        ExercisesDetails = new List<ExerciseDetails>();
     }
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,5 +15,5 @@ public class TrainingSession
     [MaxLength(100)]
     public string Name { get; set; }
 
-    public ICollection<ExerciseDetails> Trainings { get; set; }
+    public ICollection<ExerciseDetails> ExercisesDetails { get; set; }
 }

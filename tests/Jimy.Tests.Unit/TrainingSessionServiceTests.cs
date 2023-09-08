@@ -82,8 +82,8 @@ namespace Jimy.Tests.Unit
                 // Assert
                 var addedTrainingSession = _trainingSessionService.GetById(trainingSession.Id);
                 Assert.NotNull(addedTrainingSession);
-                Assert.Single(addedTrainingSession.Trainings);
-                Assert.Equal("TestExerciseDetails", addedTrainingSession.Trainings.First().Name);
+                Assert.Single(addedTrainingSession.ExercisesDetails);
+                Assert.Equal("TestExerciseDetails", addedTrainingSession.ExercisesDetails.First().Name);
         }
         public void Dispose()
         {

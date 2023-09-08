@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jimy.Api.Migrations
 {
     [DbContext(typeof(JimyDbContext))]
-    [Migration("20230906131014_Initial")]
-    partial class Initial
+    [Migration("20230908080649_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,7 +97,7 @@ namespace Jimy.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("TrainingSession", "TrainingSession")
-                        .WithMany("Trainings")
+                        .WithMany("ExercisesDetails")
                         .HasForeignKey("TrainingSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -109,7 +109,7 @@ namespace Jimy.Api.Migrations
 
             modelBuilder.Entity("TrainingSession", b =>
                 {
-                    b.Navigation("Trainings");
+                    b.Navigation("ExercisesDetails");
                 });
 #pragma warning restore 612, 618
         }

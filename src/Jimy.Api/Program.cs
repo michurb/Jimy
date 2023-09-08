@@ -11,10 +11,12 @@ builder.Services.AddDbContext<JimyDbContext>(options =>
 builder.Services.AddScoped<ExercisesService>();
 builder.Services.AddScoped<TrainingSessionService>();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-});
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+// });
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();

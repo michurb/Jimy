@@ -95,7 +95,7 @@ namespace Jimy.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("TrainingSession", "TrainingSession")
-                        .WithMany("Trainings")
+                        .WithMany("ExercisesDetails")
                         .HasForeignKey("TrainingSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -107,7 +107,7 @@ namespace Jimy.Api.Migrations
 
             modelBuilder.Entity("TrainingSession", b =>
                 {
-                    b.Navigation("Trainings");
+                    b.Navigation("ExercisesDetails");
                 });
 #pragma warning restore 612, 618
         }

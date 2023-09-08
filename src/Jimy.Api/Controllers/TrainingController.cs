@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Transactions;
+using AutoMapper;
 using Jimy.Api.DTO;
 using Jimy.Api.Entities;
 using Jimy.Api.Services;
@@ -12,48 +13,63 @@ namespace Jimy.Api.Controllers;
 public class TrainingSessionsController : ControllerBase
 {
     private readonly TrainingSessionService _trainingSessionService;
+    private readonly IMapper _mapper;
 
-    public TrainingSessionsController(TrainingSessionService trainingSessionService)
+    public TrainingSessionsController(TrainingSessionService trainingSessionService, IMapper mapper)
     {
         _trainingSessionService = trainingSessionService;
+        _mapper = mapper;
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<TrainingSessionDto>> Get()
+    {
+        var trainingSession = _trainingSessionService.GetAll();
+        var trainingSessionDto = _mapper.Map<IEnumerable<TrainingSessionDto>>(trainingSession);
+        return Ok(trainingSessionDto);
     }
     
-    [HttpGet]
-    public ActionResult<IEnumerable<TrainingSession>> Get() => Ok(_trainingSessionService.GetAll());
-    
     [HttpGet("{id}")]
-    public ActionResult<TrainingSession> GetBy(int id)
+    public ActionResult<TrainingSessionDto> GetBy(int id)
     {
         var trainingSession = _trainingSessionService.GetById(id);
-        if(trainingSession is null)
+        if (trainingSession is null)
         {
             return NotFound();
         }
-        return Ok(trainingSession);
+        var trainingSessionDto = _mapper.Map<TrainingSessionDto>(trainingSession);
+        return Ok(trainingSessionDto);
     }
     
     [HttpPut("{id}")]
-    public IActionResult Put(int id, TrainingSession session)
+    public IActionResult Put(int id, TrainingSessionInputDto inputDto)
     {
-        if(id != session.Id)
+        var existingSession = _trainingSessionService.GetById(id);
+        if (existingSession == null)
         {
-            return BadRequest();
+            return NotFound();
         }
-        _trainingSessionService.Update(session);
+        
+        _mapper.Map(inputDto, existingSession);
+
+        _trainingSessionService.Update(existingSession);
         return NoContent();
     }
     
     
     [HttpPost]
-    public ActionResult<TrainingSession> Post(TrainingSession session)
+    public ActionResult<TrainingSessionDto> Post(TrainingSessionInputDto inputDto)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-        
-        _trainingSessionService.AddSession(session);
-        return CreatedAtAction(nameof(Get), new {id = _trainingSessionService.GetById(session.Id),session});
+
+        var trainingSession = _mapper.Map<TrainingSession>(inputDto);
+        _trainingSessionService.AddSession(trainingSession);
+
+        var trainingSessionDto = _mapper.Map<TrainingSessionDto>(trainingSession);
+        return CreatedAtAction(nameof(Get), new { id = trainingSessionDto.Id }, trainingSessionDto);
         
     }
     
@@ -87,7 +103,7 @@ public class TrainingSessionsController : ControllerBase
     //Handling Exercise details
     
     [HttpPut("{sessionId}/exercisedetails/{detailsId}")]
-    public IActionResult PutExerciseDetails(int sessionId, int detailsId, ExerciseToAddDto exerciseDetails)
+    public IActionResult PutExerciseDetails(int detailsId, ExerciseToAddDto exerciseDetails)
     {
         try
         {
@@ -105,7 +121,7 @@ public class TrainingSessionsController : ControllerBase
     }
     
     [HttpDelete("{sessionId}/exercisedetails/{detailsId}")]
-    public IActionResult DeleteExerciseDetails(int sessionId, int detailsId)
+    public IActionResult DeleteExerciseDetails(int detailsId)
     {
         try
         {

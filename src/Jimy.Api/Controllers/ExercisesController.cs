@@ -34,7 +34,7 @@ public class ExercisesController : ControllerBase
     public ActionResult<Exercise> Post(Exercise exercise)
     {
         _exercisesService.Add(exercise);
-        return CreatedAtAction(nameof(Get), new { id = _exercisesService.GetById(exercise.Id), exercise });
+        return CreatedAtAction(nameof(Get), new { id = _exercisesService.GetById(exercise.Id)});
     }
 
     [HttpPut("{id}")]

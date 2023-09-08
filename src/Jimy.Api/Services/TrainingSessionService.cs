@@ -15,7 +15,7 @@ public class TrainingSessionService {
     public IEnumerable<TrainingSession> GetAll()
     {
         return _context.TrainingSessions
-            .Include(ts => ts.Trainings)
+            .Include(ts => ts.ExercisesDetails)
             .ThenInclude(t => t.Exercise)
             .ToList();
     }
@@ -23,7 +23,7 @@ public class TrainingSessionService {
     public TrainingSession GetById(int id)
     {
         return _context.TrainingSessions
-            .Include(ts => ts.Trainings)
+            .Include(ts => ts.ExercisesDetails)
             .ThenInclude(ts => ts.Exercise)
             .First(ts => ts.Id == id);
     }
@@ -73,7 +73,7 @@ public class TrainingSessionService {
             Set = set
         };
 
-        session.Trainings.Add(exerciseDetails);
+        session.ExercisesDetails.Add(exerciseDetails);
         _context.SaveChanges();
     }
     
