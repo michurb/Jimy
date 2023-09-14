@@ -17,6 +17,7 @@ builder.Services.AddScoped<TrainingSessionService>();
 // });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
@@ -30,4 +31,5 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapControllers();
+app.UseCookiePolicy();
 app.Run();
