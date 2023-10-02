@@ -1,17 +1,14 @@
-using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
-using System.Transactions;
 using AutoMapper;
 using Jimy.Api.DTO;
-using Jimy.Api.Entities;
 using Jimy.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Newtonsoft.Json;
 
 namespace Jimy.Api.Controllers;
+[ApiVersion("1.0")]
 [ApiController]
-[Route("trainingsession")]
+[Route("api/v{version:apiVersion}/trainingsessions")]
+
 public class TrainingSessionsController : ControllerBase
 {
     private readonly TrainingSessionService _trainingSessionService;
@@ -57,54 +54,6 @@ public class TrainingSessionsController : ControllerBase
         _trainingSessionService.Update(existingSession);
         return NoContent();
     }
-
-    [HttpPut("{sessionId}/start")]
-    public IActionResult StartSession(int sessionId)
-    {
-        var sessionStates = Request.Cookies[$"Session_{sessionId}"];
-        List<string> states = new();
-        if (!string.IsNullOrEmpty(sessionStates))
-        {
-            states = JsonConvert.DeserializeObject<List<string>>(sessionStates);
-        }
-            states.Add(DateTime.UtcNow.ToString("0"));
-            var seriazlizedStates = JsonConvert.SerializeObject(states);
-            var cookieOptions = new CookieOptions
-            {
-                Expires = DateTime.UtcNow.AddDays(7),
-                HttpOnly = true
-            };
-        
-        Response.Cookies.Append($"Session_{sessionId}", seriazlizedStates, cookieOptions);
-        return NoContent();
-    }
-    
-    [HttpPut("{sessionId}/stop")]
-    public IActionResult StopSession(int sessionId)
-    {
-        var sessionStates = Request.Cookies[$"Session_{sessionId}"];
-        if (string.IsNullOrEmpty(sessionStates))
-        {
-            return BadRequest("Session hasn't been started.");
-        }
-
-        List<string> states = JsonConvert.DeserializeObject<List<string>>(sessionStates);
-        if (states.Count == 0)
-        {
-            return BadRequest("Session hasn't been started.");
-        }
-
-        var serializedStates = JsonConvert.SerializeObject(states);
-        var cookieOptions = new CookieOptions
-        {
-            Expires = DateTime.Now.AddDays(7),
-            HttpOnly = true
-        };
-        Response.Cookies.Append($"Session_{sessionId}", serializedStates, cookieOptions);
-
-        return NoContent();
-    }
-
     
     [HttpPost]
     public ActionResult<TrainingSessionDto> Post(TrainingSessionInputDto inputDto)
@@ -121,22 +70,6 @@ public class TrainingSessionsController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = trainingSessionDto.Id }, trainingSessionDto);
         
     }
-    
-    [HttpPost("{sessionId}/excercisedetails")]
-    public IActionResult AddExerciseDetailsToSession (int sessionId, [FromBody]ExerciseToAddDto exerciseToAdd)
-
-    {
-        try
-        {
-            _trainingSessionService.AddExerciseToSession(sessionId, exerciseToAdd.ExerciseId, exerciseToAdd.Repetition, exerciseToAdd.Set);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-    
     [HttpDelete]
     public IActionResult Delete(int id)
     {
@@ -148,40 +81,4 @@ public class TrainingSessionsController : ControllerBase
         _trainingSessionService.Delete(id);
         return NoContent();
     }
-    
-    //Handling Exercise details
-    
-    [HttpPut("{sessionId}/exercisedetails/{detailsId}")]
-    public IActionResult PutExerciseDetails(int detailsId, ExerciseToAddDto exerciseDetails)
-    {
-        try
-        {
-            if(exerciseDetails.ExerciseId != detailsId)
-            {
-                return BadRequest();
-            }
-            _trainingSessionService.UpdateExerciseDetails(detailsId, exerciseDetails.Repetition, exerciseDetails.Set);
-            return NoContent();    
-        }
-        catch(Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-    
-    [HttpDelete("{sessionId}/exercisedetails/{detailsId}")]
-    public IActionResult DeleteExerciseDetails(int detailsId)
-    {
-        try
-        {
-            _trainingSessionService.DeleteExerciseDetails(detailsId);
-            return NoContent();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-    
 }

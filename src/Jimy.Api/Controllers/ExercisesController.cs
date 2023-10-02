@@ -3,9 +3,10 @@ using Jimy.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jimy.Api.Controllers;
-
+[ApiVersion("1.0")]
 [ApiController]
-[Route("exercises")]
+[Route("api/v{version:apiVersion}/exercise")]
+
 public class ExercisesController : ControllerBase
 {
     private readonly ExercisesService _exercisesService;
