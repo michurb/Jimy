@@ -5,6 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var myOrigins = "_myOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 //PG connection
 builder.Services.AddDbContext<JimyDbContext>(options =>
@@ -13,11 +25,8 @@ builder.Services.AddDbContext<JimyDbContext>(options =>
 builder.Services.AddScoped<ExercisesService>();
 builder.Services.AddScoped<TrainingSessionService>();
 
-
-
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddHttpContextAccessor();
-
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
@@ -37,6 +46,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(myOrigins);
 app.MapControllers();
+
 app.UseCookiePolicy();
 app.Run();

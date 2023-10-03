@@ -1,0 +1,19 @@
+<h1>HELLO FROM COMPONENT</h1>
+
+<ul>
+  <li *ngFor="let session of trainingSessions">
+    <div (click)="toggleDetails(session)">
+      {{ session.name }}
+    </div>
+    <div *ngIf="expandedSession === session" class="session-details">
+
+      <!-- List of exercises for the session -->
+      <h4>Exercises:</h4>
+      <ul>
+        <li *ngFor="let exercise of session.exercisesDetails">
+          Name: {{ exercise.name }} | Reps: {{ exercise.repetition }} | Sets: {{ exercise.set }}
+        </li>
+      </ul>
+    </div>
+  </li>
+</ul>

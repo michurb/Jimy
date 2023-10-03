@@ -2,7 +2,6 @@ using AutoMapper;
 using Jimy.Api.DTO;
 using Jimy.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Jimy.Api.Controllers;
 [ApiVersion("1.0")]
