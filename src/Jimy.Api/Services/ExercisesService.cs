@@ -1,48 +1,53 @@
-using Jimy.Api.Data;
 using Jimy.Api.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jimy.Api.Services;
 
 public class ExercisesService
 {
-    private readonly JimyDbContext _context;
-
-    public ExercisesService(JimyDbContext context)
-    {
-        _context = context;
-    }
+    private static readonly List<Exercise> Exercises = new();
 
     public IEnumerable<Exercise> GetAll()
     {
-        return _context.Exercises.ToList();
+        return Exercises;
     }
 
     public Exercise GetById(int id)
     {
-        return _context.Exercises.Find(id);
+        return Exercises.SingleOrDefault(x => x.Id == id);
     }
 
-    public void Add(Exercise exercise)
+    public int? Add(Exercise exercise)
     {
-        _context.Exercises.Add(exercise);
-        _context.SaveChanges();
-    }
+        var exerciseAlreadyExists = Exercises.Any(
+            x => x.Id == exercise.Id &&
+            x.Name == exercise.Name);
 
-    public void Update(Exercise exercise)
-    {
-        _context.Entry(exercise).State = EntityState.Modified;
-        _context.SaveChanges();
-    }
-
-    public void Delete(int id)
-    {
-        var exercise = _context.Exercises.Find(id);
-        if (exercise != null)
+        if (exerciseAlreadyExists)
         {
-            _context.Exercises.Remove(exercise);
-            _context.SaveChanges();
-
+            return default;
         }
+        Exercises.Add(exercise);
+        return exercise.Id;
+    }
+
+    public bool Update(Exercise exercise)
+    {
+        var existingExercise = Exercises.SingleOrDefault(x => x.Id == exercise.Id);
+        if (existingExercise is null) return false;
+
+        existingExercise.Name = exercise.Name;
+        return true;
+    }
+
+    public bool Delete(int id)
+    {
+        var existingExercise = Exercises.SingleOrDefault(x => x.Id == id);
+        if (existingExercise is null)
+        {
+            return false;
+        }
+
+        Exercises.Remove(existingExercise);
+        return true;
     }
 }

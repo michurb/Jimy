@@ -8,15 +8,13 @@ namespace Jimy.Api.Controllers;
 [Route("exercises")]
 public class ExercisesController : ControllerBase
 {
-    private readonly ExercisesService _exercisesService;
-
-    public ExercisesController(ExercisesService exercisesService)
-    {
-        _exercisesService = exercisesService;
-    }
+    private readonly ExercisesService _exercisesService = new();
 
     [HttpGet]
-    public ActionResult<IEnumerable<Exercise>> Get() => Ok(_exercisesService.GetAll());
+    public ActionResult<IEnumerable<Exercise>> Get()
+    {
+        return Ok(_exercisesService.GetAll());
+    }
 
     [HttpGet("{id}")]
     public ActionResult<Exercise> GetBy(int id)
@@ -33,30 +31,34 @@ public class ExercisesController : ControllerBase
     [HttpPost]
     public ActionResult<Exercise> Post(Exercise exercise)
     {
-        _exercisesService.Add(exercise);
-        return CreatedAtAction(nameof(Get), new { id = _exercisesService.GetById(exercise.Id)});
+        var id = _exercisesService.Add(exercise);
+        if (id is null)
+        {
+            return NotFound();
+        }
+        return CreatedAtAction(nameof(Get), new {id}, null);
     }
 
     [HttpPut("{id}")]
     public IActionResult Put(int id, Exercise exercise)
     {
-        if (id != exercise.Id)
+        exercise.Id = id;
+        if (_exercisesService.Update(exercise))
         {
-            return BadRequest();
+            return NoContent();
         }
-        _exercisesService.Update(exercise);
-        return NoContent();
+
+        return NotFound();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var exercise = _exercisesService.GetById(id);
-        if (exercise is null)
+        if (_exercisesService.Delete(id))
         {
-            return NotFound();
+            return NoContent();
         }
-        _exercisesService.Delete(id);
-        return NoContent();
+
+        return NotFound();
     }
 }

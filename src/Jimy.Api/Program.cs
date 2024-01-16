@@ -1,22 +1,4 @@
-using System.Text.Json.Serialization;
-using Jimy.Api.Data;
-using Jimy.Api.Services;
-using Microsoft.EntityFrameworkCore;
-
 var builder = WebApplication.CreateBuilder(args);
-
-//PG connection
-builder.Services.AddDbContext<JimyDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("JimyConnection")));
-builder.Services.AddScoped<ExercisesService>();
-builder.Services.AddScoped<TrainingSessionService>();
-
-// builder.Services.AddControllers().AddJsonOptions(options =>
-// {
-//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-// });
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
@@ -29,5 +11,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.MapControllers();
 app.Run();

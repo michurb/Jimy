@@ -1,0 +1,28 @@
+@url = http://localhost:5000
+@id = 1
+
+###
+GET {{url}}/exercises
+
+###
+GET {{url}}/exercises/{{id}}
+
+###
+POST {{url}}/exercises
+Content-Type: application/json
+
+{
+    "id": "1",
+    "name": "BP"
+}
+
+###
+PUT {{url}}/exercises/{{id}}
+Content-Type: application/json
+
+{
+    "id": "2",
+    "name": "Squat"
+}
+###
+DELETE {{url}}/exercises/{{id}}
