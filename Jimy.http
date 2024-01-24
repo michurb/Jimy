@@ -1,5 +1,5 @@
 @url = http://localhost:5000
-@id = 1
+@id = 6d31c23c-51d0-491f-82e8-80cd5c961938
 
 ###
 GET {{url}}/exercises
@@ -12,7 +12,6 @@ POST {{url}}/exercises
 Content-Type: application/json
 
 {
-    "id": "1",
     "name": "BP"
 }
 
@@ -21,7 +20,6 @@ PUT {{url}}/exercises/{{id}}
 Content-Type: application/json
 
 {
-    "id": "2",
     "name": "Squat"
 }
 ###

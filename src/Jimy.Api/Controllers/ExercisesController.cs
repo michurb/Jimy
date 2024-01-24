@@ -1,3 +1,5 @@
+using Jimy.Api.Commands;
+using Jimy.Api.DTO;
 using Jimy.Api.Entities;
 using Jimy.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,7 @@ public class ExercisesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Exercise> GetBy(int id)
+    public ActionResult<Exercise> GetBy(Guid id)
     {
         var exercise = _exercisesService.GetById(id);
         if (exercise == null)
@@ -29,9 +31,9 @@ public class ExercisesController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<Exercise> Post(Exercise exercise)
+    public ActionResult<Exercise> Post(CreateExercise command)
     {
-        var id = _exercisesService.Add(exercise);
+        var id = _exercisesService.Add(command with {Id = Guid.NewGuid()});
         if (id is null)
         {
             return NotFound();
@@ -40,10 +42,10 @@ public class ExercisesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Put(int id, Exercise exercise)
+    public IActionResult Put(Guid id, ChangeExerciseName command)
     {
-        exercise.Id = id;
-        if (_exercisesService.Update(exercise))
+        command = command with {ExerciseId = id};
+        if (_exercisesService.Update(command))
         {
             return NoContent();
         }
@@ -52,9 +54,9 @@ public class ExercisesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(Guid id)
     {
-        if (_exercisesService.Delete(id))
+        if (_exercisesService.Delete(new DeleteExercise(id)))
         {
             return NoContent();
         }

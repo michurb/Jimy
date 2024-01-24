@@ -1,3 +1,5 @@
+using Jimy.Api.Commands;
+using Jimy.Api.DTO;
 using Jimy.Api.Entities;
 
 namespace Jimy.Api.Services;
@@ -6,42 +8,45 @@ public class ExercisesService
 {
     private static readonly List<Exercise> Exercises = new();
 
-    public IEnumerable<Exercise> GetAll()
+    public IEnumerable<ExerciseDto> GetAll() => Exercises.Select(x => new ExerciseDto
     {
-        return Exercises;
-    }
+        Id = x.Id,
+        Name = x.Name
+    });
 
-    public Exercise GetById(int id)
-    {
-        return Exercises.SingleOrDefault(x => x.Id == id);
-    }
+    public ExerciseDto GetById(Guid id) => GetAll().SingleOrDefault(x => x.Id == id);
 
-    public int? Add(Exercise exercise)
+    public Guid? Add(CreateExercise command)
     {
         var exerciseAlreadyExists = Exercises.Any(
-            x => x.Id == exercise.Id &&
-            x.Name == exercise.Name);
+            x => x.Id == command.Id &&
+            x.Name == command.Name);
 
         if (exerciseAlreadyExists)
         {
             return default;
         }
+        var exercise = new Exercise(command.Id, command.Name);
         Exercises.Add(exercise);
-        return exercise.Id;
+        return command.Id;
     }
 
-    public bool Update(Exercise exercise)
+    public bool Update(ChangeExerciseName command)
     {
-        var existingExercise = Exercises.SingleOrDefault(x => x.Id == exercise.Id);
-        if (existingExercise is null) return false;
+        var existingExercise = Exercises.SingleOrDefault(x => x.Id == command.ExerciseId);
+        if (existingExercise is null)
+        {
+            return false;
+        }
 
-        existingExercise.Name = exercise.Name;
+        existingExercise.UpdateName(command.Name);
         return true;
     }
+    
 
-    public bool Delete(int id)
+    public bool Delete(DeleteExercise command)
     {
-        var existingExercise = Exercises.SingleOrDefault(x => x.Id == id);
+        var existingExercise = Exercises.SingleOrDefault(x => x.Id == command.ExerciseId);
         if (existingExercise is null)
         {
             return false;
@@ -50,4 +55,5 @@ public class ExercisesService
         Exercises.Remove(existingExercise);
         return true;
     }
+    
 }
