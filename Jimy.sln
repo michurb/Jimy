@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C41055FD-3487-49B7-BE62-54C47A964E78}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{52301B2D-3BEB-472D-9E74-D85BD35FE679}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jimy.Api", "src\Jimy.Api\Jimy.Api.csproj", "{F29E0005-4D9D-4FEF-924F-5840F200C2CF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jimy.Tests.Unit", "tests\Jimy.Tests.Unit\Jimy.Tests.Unit.csproj", "{9103713C-EE7C-4CD5-BB25-0520E8133B39}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jimy", "src\Jimy\Jimy.csproj", "{462D8852-BB85-447B-9F75-6F5AABCCB779}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,16 +16,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F29E0005-4D9D-4FEF-924F-5840F200C2CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F29E0005-4D9D-4FEF-924F-5840F200C2CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F29E0005-4D9D-4FEF-924F-5840F200C2CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F29E0005-4D9D-4FEF-924F-5840F200C2CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9103713C-EE7C-4CD5-BB25-0520E8133B39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9103713C-EE7C-4CD5-BB25-0520E8133B39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9103713C-EE7C-4CD5-BB25-0520E8133B39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9103713C-EE7C-4CD5-BB25-0520E8133B39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F29E0005-4D9D-4FEF-924F-5840F200C2CF} = {C41055FD-3487-49B7-BE62-54C47A964E78}
+		{462D8852-BB85-447B-9F75-6F5AABCCB779} = {52301B2D-3BEB-472D-9E74-D85BD35FE679}
 	EndGlobalSection
 EndGlobal
