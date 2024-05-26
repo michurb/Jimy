@@ -1,0 +1,8 @@
+﻿<div class="col">
+    <div class="card rounded-3 exercise-card">
+        <div class="card-header py-3">
+            <h4 class="card-title mb-0">@Exercise.Name</h4>
+        </div>
+        <button class="btn btn-primary btn-sm mb-1" @onclick="@(async () => await ExerciseQuickViewClicked.InvokeAsync(Exercise))"> Quick view</button>
+    </div>
+</div>

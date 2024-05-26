@@ -1,0 +1,20 @@
+﻿@page "/exerciseoverview"
+
+<h2 class="m-3">Exercise Overview</h2>
+
+@if(Exercises == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickViewPopup Exercise="_selectedExercise" />
+    <div class="row">
+        @foreach(var exercise in Exercises)
+        {
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <ExerciseCard Exercise="exercise" ExerciseQuickViewClicked="ShowQuickViewPopup"/>
+            </div>
+        }
+    </div>
+}

@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{52301B2D-3BE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jimy", "src\Jimy\Jimy.csproj", "{462D8852-BB85-447B-9F75-6F5AABCCB779}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jimy.Shared", "src\Jimy.Shared\Jimy.Shared.csproj", "{5330C7B9-905E-49A3-988D-3BE5B717586C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,13 @@ Global
 		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{462D8852-BB85-447B-9F75-6F5AABCCB779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5330C7B9-905E-49A3-988D-3BE5B717586C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5330C7B9-905E-49A3-988D-3BE5B717586C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5330C7B9-905E-49A3-988D-3BE5B717586C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5330C7B9-905E-49A3-988D-3BE5B717586C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{462D8852-BB85-447B-9F75-6F5AABCCB779} = {52301B2D-3BEB-472D-9E74-D85BD35FE679}
+		{5330C7B9-905E-49A3-988D-3BE5B717586C} = {52301B2D-3BEB-472D-9E74-D85BD35FE679}
 	EndGlobalSection
 EndGlobal
