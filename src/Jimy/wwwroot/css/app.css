@@ -12437,28 +12437,28 @@ h6, .h6 {
     background-color: #FFF !important;
 }
 
-.employee-link {
+.exercise-link {
     text-decoration: none;
 }
 
-.employee-img {
+.exercise-img {
     max-width: 200px;
 }
 
-/* Employee-quick-view */
+/* exercise-quick-view */
 .close {
     border: none;
     background-color: #FFF;
 }
 
-/* Employee detail */
-.employee-map {
+/* exercise detail */
+.exercise-map {
     width: 350px;
     height: 500px;
     flex-shrink: 0;
 }
 
-.employee-detail, .employee-edit {
+.exercise-detail, .exercise-edit {
     padding: 15px;
     background-color: #FFF !important;
 }

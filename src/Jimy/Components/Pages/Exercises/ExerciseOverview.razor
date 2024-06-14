@@ -7,14 +7,21 @@
     <p><em>Loading...</em></p>
 }
 else
-{
+{ 
     <QuickViewPopup Exercise="_selectedExercise" />
-    <div class="row">
-        @foreach(var exercise in Exercises)
-        {
-            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                <ExerciseCard Exercise="exercise" ExerciseQuickViewClicked="ShowQuickViewPopup"/>
-            </div>
-        }
+<div class="row">
+    @foreach (var exercise in Exercises)
+    {
+    <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
+        <ErrorBoundary>
+            <ChildContent>
+                <ExerciseCard Exercise="exercise" ExerciseQuickViewClicked="ShowQuickViewPopup"></ExerciseCard>
+            </ChildContent>
+            <ErrorContent>
+                <p class="errorUI">Invalid exercise!</p>
+            </ErrorContent>
+        </ErrorBoundary>
     </div>
+    }
+</div>
 }
