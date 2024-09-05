@@ -13,4 +13,9 @@ public class WorkoutExerciseRepository : GenericRepository<WorkoutExercise>, IWo
     {
         return await _dbSet.Where(we => we.WorkoutPlanId == workoutPlanId).ToListAsync();
     }
+    
+    public async Task<WorkoutExercise> GetByWorkoutPlanAndExerciseIdAsync(int workoutPlanId, int exerciseId)
+    {
+        return await _dbSet.FirstOrDefaultAsync(we => we.WorkoutPlanId == workoutPlanId && we.ExerciseId == exerciseId);
+    }
 }
