@@ -4,5 +4,4 @@ namespace Jimy.Data.Interfaces;
 
 public interface IExerciseRepository : IGenericRepository<Exercise>
 {
-    
 }

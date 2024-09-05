@@ -7,9 +7,11 @@ namespace Jimy.Data.Repositories;
 
 public class WorkoutPlanRepository : GenericRepository<WorkoutPlan>, IWorkoutPlanRepository
 {
-    public WorkoutPlanRepository(JimyDbContext context) : base(context) { }
+    public WorkoutPlanRepository(JimyDbContext context) : base(context)
+    {
+    }
 
-    public async Task<IEnumerable<WorkoutPlan>> GetByUserIdAsync(int userId)
+    public async Task<IEnumerable<WorkoutPlan>> GetByUserIdAsync(Guid userId)
     {
         return await _dbSet.Where(wp => wp.UserId == userId).ToListAsync();
     }

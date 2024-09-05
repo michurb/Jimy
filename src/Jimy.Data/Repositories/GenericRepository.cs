@@ -26,11 +26,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.ToListAsync();
     }
 
-    public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression)
-    {
-        return await _dbSet.Where(expression).ToListAsync();
-    }
-
     public virtual async Task<T> AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity);
@@ -52,5 +47,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression)
+    {
+        return await _dbSet.Where(expression).ToListAsync();
     }
 }

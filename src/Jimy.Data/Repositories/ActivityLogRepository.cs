@@ -7,9 +7,11 @@ namespace Jimy.Data.Repositories;
 
 public class ActivityLogRepository : GenericRepository<ActivityLog>, IActivityLogRepository
 {
-    public ActivityLogRepository(JimyDbContext context) : base(context) { }
+    public ActivityLogRepository(JimyDbContext context) : base(context)
+    {
+    }
 
-    public async Task<IEnumerable<ActivityLog>> GetByUserIdAsync(int userId)
+    public async Task<IEnumerable<ActivityLog>> GetByUserIdAsync(Guid userId)
     {
         return await _dbSet.Where(al => al.UserId == userId).ToListAsync();
     }

@@ -3,6 +3,4 @@
 namespace Jimy.Business.DTOs;
 
 public record UpdateWorkoutPlanDto(
-    [Required]
-    [StringLength(100)]
-    string Name);
+    [Required] [StringLength(100)] string Name);

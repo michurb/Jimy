@@ -4,5 +4,5 @@ namespace Jimy.Data.Interfaces;
 
 public interface IActivityLogRepository : IGenericRepository<ActivityLog>
 {
-    Task<IEnumerable<ActivityLog>> GetByUserIdAsync(int userId);
+    Task<IEnumerable<ActivityLog>> GetByUserIdAsync(Guid userId);
 }

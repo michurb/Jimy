@@ -4,5 +4,5 @@ namespace Jimy.Data.Interfaces;
 
 public interface IWorkoutPlanRepository : IGenericRepository<WorkoutPlan>
 {
-    Task<IEnumerable<WorkoutPlan>> GetByUserIdAsync(int userId);
+    Task<IEnumerable<WorkoutPlan>> GetByUserIdAsync(Guid userId);
 }

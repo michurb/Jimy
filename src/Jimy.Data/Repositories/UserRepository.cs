@@ -10,7 +10,7 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public UserRepository(JimyDbContext context) : base(context)
     {
     }
-    
+
     public async Task<User> GetByIdAsync(Guid id)
     {
         return await _dbSet.FindAsync(id);
@@ -20,6 +20,14 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     {
         return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
     }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var user = _dbSet.Find(id);
+        _dbSet.Remove(user);
+        await _context.SaveChangesAsync();
+    }
+
 
     public override async Task<User> AddAsync(User user)
     {

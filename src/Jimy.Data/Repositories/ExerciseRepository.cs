@@ -6,5 +6,7 @@ namespace Jimy.Data.Repositories;
 
 public class ExerciseRepository : GenericRepository<Exercise>, IExerciseRepository
 {
-    public ExerciseRepository(JimyDbContext context) : base(context) { }
+    public ExerciseRepository(JimyDbContext context) : base(context)
+    {
+    }
 }
