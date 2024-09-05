@@ -1,3 +1,8 @@
-﻿namespace Jimy.Business.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdateWorkoutPlanDto(string Name);
+namespace Jimy.Business.DTOs;
+
+public record UpdateWorkoutPlanDto(
+    [Required]
+    [StringLength(100)]
+    string Name);

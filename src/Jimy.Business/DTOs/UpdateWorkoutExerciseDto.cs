@@ -1,3 +1,11 @@
-﻿namespace Jimy.Business.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdateWorkoutExerciseDto(int Sets, int Reps);
+namespace Jimy.Business.DTOs;
+
+public record UpdateWorkoutExerciseDto(
+    [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Sets must be greater than 0")]
+    int Sets,
+    [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Reps must be greater than 0")]
+    int Reps);

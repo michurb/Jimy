@@ -17,7 +17,7 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<UserDto> GetUserByIdAsync(int id)
+    public async Task<UserDto> GetUserByIdAsync(Guid id)
     {
         var user = await _userRepository.GetByIdAsync(id);
         return _mapper.Map<UserDto>(user);
@@ -36,7 +36,7 @@ public class UserService : IUserService
         return _mapper.Map<UserDto>(user);
     }
 
-    public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
+    public async Task<UserDto> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
     {
         var user = await _userRepository.GetByIdAsync(id);
         if (user == null)

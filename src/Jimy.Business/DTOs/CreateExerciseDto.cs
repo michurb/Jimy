@@ -1,3 +1,10 @@
-﻿namespace Jimy.Business.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record CreateExerciseDto(string Name, string Description);
+namespace Jimy.Business.DTOs;
+
+public record CreateExerciseDto(
+    [Required]
+    [StringLength(100)]
+    string Name,
+    [StringLength(500)]
+    string Description);

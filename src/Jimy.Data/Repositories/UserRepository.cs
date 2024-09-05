@@ -10,6 +10,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public UserRepository(JimyDbContext context) : base(context)
     {
     }
+    
+    public async Task<User> GetByIdAsync(Guid id)
+    {
+        return await _dbSet.FindAsync(id);
+    }
 
     public async Task<User> GetByEmailAsync(string email)
     {

@@ -1,3 +1,18 @@
-﻿namespace Jimy.Business.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdateActivityLogDto(DateTime Date, string ActivityType, int Duration, int? WorkoutPlanId);
+namespace Jimy.Business.DTOs;
+
+public record UpdateActivityLogDto(
+    [Required]
+    DateTime Date,
+    
+    [Required]
+    [StringLength(50)]
+    string ActivityType,
+    
+    [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Duration must be greater than 0")]
+    int Duration,
+    
+    [Range(1, int.MaxValue, ErrorMessage = "WorkoutPlanId must be greater than 0")]
+    int? WorkoutPlanId);

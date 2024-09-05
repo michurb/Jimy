@@ -1,3 +1,13 @@
-﻿namespace Jimy.Business.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdateUserDto(string Username, string Email);
+namespace Jimy.Business.DTOs;
+
+public record UpdateUserDto(
+    [Required]
+    [StringLength(50)]
+    string Username,
+    
+    [Required]
+    [EmailAddress]
+    [StringLength(100)]
+    string Email);
