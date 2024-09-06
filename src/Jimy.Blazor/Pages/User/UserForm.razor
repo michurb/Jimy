@@ -1,0 +1,73 @@
+﻿@page "/users/create"
+@page "/users/edit/{Id:guid}"
+@using System.ComponentModel.DataAnnotations
+@using Jimy.Blazor.Services
+@using Jimy.Business.DTOs
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<h1 class="text-2xl font-bold mb-4">@(_isEditing ? "Edit" : "Create") User</h1>
+
+<EditForm Model="_user" OnValidSubmit="HandleSubmit" class="max-w-md">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-4">
+        <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
+        <InputText id="username" @bind-Value="_user.Username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+        <ValidationMessage For="@(() => _user.Username)" />
+    </div>
+    <div class="mb-4">
+        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+        <InputText id="email" @bind-Value="_user.Email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+        <ValidationMessage For="@(() => _user.Email)" />
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        @(_isEditing ? "Update" : "Create") User
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public Guid? Id { get; set; }
+
+    private bool _isEditing => Id.HasValue;
+    private UserFormModel _user = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_isEditing)
+        {
+            var user = await ApiService.GetUserAsync(Id.Value);
+            _user.Username = user.Username;
+            _user.Email = user.Email;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isEditing)
+        {
+            await ApiService.UpdateUserAsync(Id.Value, new UpdateUserDto(_user.Username, _user.Email));
+        }
+        else
+        {
+            await ApiService.CreateUserAsync(new CreateUserDto(_user.Username, _user.Email));
+        }
+
+        NavigationManager.NavigateTo("/users");
+    }
+
+
+    public class UserFormModel
+    {
+        [Required]
+        [StringLength(50, ErrorMessage = "Username is too long.")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        [EmailAddress]
+        [StringLength(100, ErrorMessage = "Email is too long.")]
+        public string Email { get; set; } = string.Empty;
+    }
+
+}

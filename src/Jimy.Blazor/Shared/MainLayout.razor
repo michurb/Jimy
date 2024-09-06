@@ -1,0 +1,20 @@
+﻿@inherits LayoutComponentBase
+
+<div class="min-h-screen bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="" class="text-2xl font-bold">Jimy</a>
+            <div>
+                <NavLink href="" Match="NavLinkMatch.All" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500">Home</NavLink>
+                <NavLink href="workout-plans" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500">Workout Plans</NavLink>
+                <NavLink href="exercises" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500">Exercises</NavLink>
+                <NavLink href="activity-logs" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500">Activity Logs</NavLink>
+                <NavLink href="users" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-500">Users</NavLink>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-4 p-4">
+        @Body
+    </main>
+</div>

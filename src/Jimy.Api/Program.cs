@@ -7,6 +7,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorOrigin",
+        builder => 
+        {
+            builder.WithOrigins("https://localhost:7107", "http://localhost:5284")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
+builder.Services.AddApplication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -23,7 +36,6 @@ builder.Services.AddSwaggerGen(swagger =>
 
 builder.Services.AddDbContext<JimyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddApplication();
 
 // Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -32,6 +44,7 @@ builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
 builder.Services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
 
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -39,8 +52,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseHttpsRedirection();
+app.UseRouting();
 app.MapControllers();
 
+app.UseCors("AllowBlazorOrigin");
 app.Run();

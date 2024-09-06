@@ -3,7 +3,7 @@ using Jimy.Business.Exceptions;
 
 namespace Jimy.Api.Middleware;
 
-internal sealed class ErrorHandlingMiddleware : IMiddleware
+internal sealed class ErrorHandlingMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {

@@ -1,0 +1,10 @@
+{
+  "name": "jimy.blazor",
+  "version": "1.0.0",
+  "scripts": {
+    "css:build": "tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/app.min.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.10"
+  }
+}

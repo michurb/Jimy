@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Jimy.Business.Abstracition;
+using Jimy.Business.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jimy.Business;
@@ -19,6 +20,8 @@ public static class Extensions
             .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        services.AddAutoMapper(typeof(AutoMapperProfile));
 
         return services;
     }
