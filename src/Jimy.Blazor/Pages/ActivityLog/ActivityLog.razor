@@ -1,0 +1,72 @@
+﻿@page "/activity-logs"
+@using Jimy.Blazor.Services
+@using Jimy.Business.DTOs
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<h1 class="text-2xl font-bold mb-4">Activity Logs</h1>
+
+@if (_activityLogs == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach (var log in _activityLogs)
+        {
+            <div class="bg-white shadow rounded-lg p-4">
+                <h2 class="text-xl font-semibold">@log.ActivityType</h2>
+                <p class="text-gray-600">Date: @log.Date.ToShortDateString()</p>
+                <p class="text-gray-600">Duration: @log.Duration minutes</p>
+                <div class="mt-4">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            @onclick="() => EditActivityLog(log.Id)">
+                        Edit
+                    </button>
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            @onclick="() => DeleteActivityLog(log.Id)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            @onclick="CreateActivityLog">
+        Create New Activity Log
+    </button>
+}
+
+@code {
+    private IEnumerable<ActivityLogDto>? _activityLogs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadActivityLogs();
+    }
+
+    private async Task LoadActivityLogs()
+    {
+        // TODO: Replace with actual user ID
+        Guid userId = Guid.Empty;
+        _activityLogs = await ApiService.GetActivityLogsAsync(userId);
+    }
+
+    private void EditActivityLog(int id)
+    {
+        NavigationManager.NavigateTo($"/activity-logs/edit/{id}");
+    }
+
+    private async Task DeleteActivityLog(int id)
+    {
+        await ApiService.DeleteActivityLogAsync(id);
+        await LoadActivityLogs();
+    }
+
+    private void CreateActivityLog()
+    {
+        NavigationManager.NavigateTo("/activity-logs/create");
+    }
+}

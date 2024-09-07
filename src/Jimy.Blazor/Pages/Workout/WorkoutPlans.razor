@@ -1,0 +1,71 @@
+﻿@page "/workout-plans"
+@using Jimy.Blazor.Services
+@using Jimy.Business.DTOs
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<h1 class="text-2xl font-bold mb-4">Workout Plans</h1>
+
+@if (_workoutPlans == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach (var plan in _workoutPlans)
+        {
+            <div class="bg-white shadow rounded-lg p-4">
+                <h2 class="text-xl font-semibold">@plan.Name</h2>
+                <p class="text-sm text-gray-500">Created: @plan.CreatedDate.ToShortDateString()</p>
+                <div class="mt-4">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            @onclick="() => EditWorkoutPlan(plan.Id)">
+                        Edit
+                    </button>
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            @onclick="() => DeleteWorkoutPlan(plan.Id)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            @onclick="CreateWorkoutPlan">
+        Create New Workout Plan
+    </button>
+}
+
+@code {
+    private IEnumerable<WorkoutPlanDto>? _workoutPlans;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkoutPlans();
+    }
+
+    private async Task LoadWorkoutPlans()
+    {
+        // TODO: Replace with actual user ID
+        Guid userId = Guid.Empty;
+        _workoutPlans = await ApiService.GetWorkoutPlansAsync(userId);
+    }
+
+    private void EditWorkoutPlan(int id)
+    {
+        NavigationManager.NavigateTo($"/workout-plans/edit/{id}");
+    }
+
+    private async Task DeleteWorkoutPlan(int id)
+    {
+        await ApiService.DeleteWorkoutPlanAsync(id);
+        await LoadWorkoutPlans();
+    }
+
+    private void CreateWorkoutPlan()
+    {
+        NavigationManager.NavigateTo("/workout-plans/create");
+    }
+}

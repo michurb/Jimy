@@ -1,0 +1,63 @@
+﻿@page "/workout-plans/create"
+@page "/workout-plans/edit/{Id:int}"
+@using System.ComponentModel.DataAnnotations
+@using Jimy.Blazor.Services
+@using Jimy.Business.DTOs
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<h1 class="text-2xl font-bold mb-4">@(_isEditing ? "Edit" : "Create") Workout Plan</h1>
+
+<EditForm Model="_workoutPlan" OnValidSubmit="HandleSubmit" class="max-w-md">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-4">
+        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+        <InputText id="name" @bind-Value="_workoutPlan.Name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+        <ValidationMessage For="@(() => _workoutPlan.Name)" />
+    </div>
+
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        @(_isEditing ? "Update" : "Create") Workout Plan
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private bool _isEditing => Id.HasValue;
+    private WorkoutPlanFormModel _workoutPlan = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_isEditing)
+        {
+            var plan = await ApiService.GetWorkoutPlanAsync(Id.Value);
+            _workoutPlan.Name = plan.Name;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isEditing)
+        {
+            await ApiService.UpdateWorkoutPlanAsync(Id.Value, new UpdateWorkoutPlanDto(_workoutPlan.Name));
+        }
+        else
+        {
+            // TODO: Replace with actual user ID
+            Guid userId = Guid.Empty;
+            await ApiService.CreateWorkoutPlanAsync(new CreateWorkoutPlanDto(userId, _workoutPlan.Name));
+        }
+
+        NavigationManager.NavigateTo("/workout-plans");
+    }
+
+    public class WorkoutPlanFormModel
+    {
+        [Required]
+        [StringLength(100, ErrorMessage = "Name is too long.")]
+        public string Name { get; set; } = string.Empty;
+    }
+}

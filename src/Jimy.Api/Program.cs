@@ -1,4 +1,3 @@
-using Jimy.Api.Middleware;
 using Jimy.Business;
 using Jimy.Data.Data;
 using Jimy.Data.Interfaces;
@@ -11,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorOrigin",
-        builder => 
+        builder =>
         {
             builder.WithOrigins("https://localhost:7107", "http://localhost:5284")
                 .AllowAnyMethod()

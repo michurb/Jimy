@@ -5,6 +5,16 @@ namespace Jimy.Api.Middleware;
 
 internal sealed class ErrorHandlingMiddleware
 {
+    private readonly ILogger<ErrorHandlingMiddleware> _logger;
+
+    private readonly RequestDelegate _next;
+
+    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -17,19 +27,41 @@ internal sealed class ErrorHandlingMiddleware
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         var code = HttpStatusCode.InternalServerError; // 500 if unexpected
+        var message = "An unexpected error occurred. Please try again later.";
 
-        if (exception is UserNotFoundException) code = HttpStatusCode.NotFound;
-        else if (exception is ActivityLogNotFoundException) code = HttpStatusCode.NotFound;
-        else if (exception is WorkoutPlanNotFoundException) code = HttpStatusCode.NotFound;
-        else if (exception is ExerciseNotFoundException) code = HttpStatusCode.NotFound;
-        else if (exception is InvalidCredentialsException) code = HttpStatusCode.Unauthorized;
-        else if (exception is EmailAlreadyInUseException) code = HttpStatusCode.Conflict;
-        else if (exception is UsernameAlreadyInUseException) code = HttpStatusCode.Conflict;
+        switch (exception)
+        {
+            case UserNotFoundException
+                or ActivityLogNotFoundException
+                or WorkoutPlanNotFoundException
+                or ExerciseNotFoundException:
+                code = HttpStatusCode.NotFound;
+                message = exception.Message;
+                break;
 
+            case InvalidCredentialsException:
+                code = HttpStatusCode.Unauthorized;
+                message = exception.Message;
+                break;
+
+            case EmailAlreadyInUseException
+                or UsernameAlreadyInUseException
+                or ExerciseAlreadyExistsException:
+                code = HttpStatusCode.Conflict;
+                message = exception.Message;
+                break;
+
+            default:
+                _logger.LogError(exception, "An unhandled exception occurred");
+                break;
+        }
+
+        context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code;
-        return context.Response.WriteAsJsonAsync(new { error = exception.Message });
+
+        return context.Response.WriteAsJsonAsync(new { error = message });
     }
 }

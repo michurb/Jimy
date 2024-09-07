@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Jimy.Business.DTOs;
+using Jimy.Data.Entities;
 
 namespace Jimy.Blazor.Services;
 
@@ -45,5 +46,37 @@ public class ApiService
     public async Task DeleteWorkoutPlanAsync(int id) =>
         await _httpClient.DeleteAsync($"workoutplans/{id}");
 
-    // Add similar methods for Exercises and ActivityLogs
+    // Exercises
+    public async Task<IEnumerable<ExerciseDto>> GetExercisesAsync() =>
+        await _httpClient.GetFromJsonAsync<IEnumerable<ExerciseDto>>("exercises") ?? Array.Empty<ExerciseDto>();
+    
+    public async Task<ExerciseDto> GetExerciseAsync(int id) =>
+        await _httpClient.GetFromJsonAsync<ExerciseDto>($"exercises/{id}") ?? throw new Exception("Exercise not found");
+    
+    public async Task CreateExerciseAsync(CreateExerciseDto exercise) =>
+        await _httpClient.PostAsJsonAsync("exercises", exercise);
+    
+    public async Task UpdateExerciseAsync(int id, UpdateExerciseDto exercise) =>
+        await _httpClient.PutAsJsonAsync($"exercises/{id}", exercise);
+    
+    public async Task DeleteExerciseAsync(int id) =>
+        await _httpClient.DeleteAsync($"exercises/{id}");
+    
+    //AcitvityLog
+    
+    public async Task<IEnumerable<ActivityLogDto>> GetActivityLogsAsync(Guid id) =>
+        await _httpClient.GetFromJsonAsync<IEnumerable<ActivityLogDto>>($"activitylogs/user/{id}") ?? Array.Empty<ActivityLogDto>();
+    
+    public async Task<ActivityLogDto> GetActivityLogAsync(Guid id) =>
+        await _httpClient.GetFromJsonAsync<ActivityLogDto>("activitylogs/user/{id}") ?? throw new Exception("Activity log not found");
+    
+    public async Task CreateActivityLogAsync(CreateActivityLogDto activityLog) =>
+        await _httpClient.PostAsJsonAsync("activitylogs", activityLog);
+    
+    public async Task UpdateActivityLogAsync(int id, UpdateActivityLogDto activityLog) =>
+        await _httpClient.PutAsJsonAsync($"activitylogs/{id}", activityLog);
+    
+    public async Task DeleteActivityLogAsync(int id) =>
+        await _httpClient.DeleteAsync($"activitylogs/{id}");
+    
 }

@@ -39,6 +39,7 @@ public class JimyDbContext : DbContext
         {
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasIndex(e => e.Name).IsUnique();
         });
 
         // Configure WorkoutExercise entity
