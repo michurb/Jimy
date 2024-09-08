@@ -57,7 +57,7 @@
     protected override async Task OnInitializedAsync()
     {
         // TODO: Replace with actual user ID
-        Guid userId = Guid.Empty;
+        Guid userId = new Guid("00000000-0000-0000-0000-000000000001");
         _workoutPlans = await ApiService.GetWorkoutPlansAsync(userId);
 
         if (_isEditing)
@@ -88,7 +88,7 @@
         else
         {
             // TODO: Replace with actual user ID
-            Guid userId = Guid.Empty;
+            Guid userId = new Guid("00000000-0000-0000-0000-000000000001");
             await ApiService.CreateActivityLogAsync(new CreateActivityLogDto(
                 userId,
                 _activityLog.Date,

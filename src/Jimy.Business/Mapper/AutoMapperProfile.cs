@@ -31,5 +31,13 @@ public class AutoMapperProfile : Profile
         CreateMap<CreateExerciseDto, Exercise>();
         CreateMap<UpdateExerciseDto, Exercise>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        
+        // WorkoutExercise mappings
+        CreateMap<CreateWorkoutPlanDto, WorkoutPlan>()
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.Exercises, opt => opt.MapFrom(src => src.Exercises));
+
+        CreateMap<CreateWorkoutExerciseDto, WorkoutExercise>()
+            .ForMember(dest => dest.Exercise, opt => opt.Ignore());
     }
 }

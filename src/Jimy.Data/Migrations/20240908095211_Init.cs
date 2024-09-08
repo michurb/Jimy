@@ -46,7 +46,7 @@ namespace Jimy.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -107,11 +107,62 @@ namespace Jimy.Data.Migrations
                         column: x => x.ExerciseId,
                         principalTable: "Exercises",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_WorkoutExercises_WorkoutPlans_WorkoutPlanId",
                         column: x => x.WorkoutPlanId,
                         principalTable: "WorkoutPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkoutSessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkoutPlanId = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkoutSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkoutSessions_WorkoutPlans_WorkoutPlanId",
+                        column: x => x.WorkoutPlanId,
+                        principalTable: "WorkoutPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkoutSessionExercises",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkoutSessionId = table.Column<int>(type: "int", nullable: false),
+                    ExerciseId = table.Column<int>(type: "int", nullable: false),
+                    Sets = table.Column<int>(type: "int", nullable: false),
+                    Reps = table.Column<int>(type: "int", nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(5,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkoutSessionExercises", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkoutSessionExercises_Exercises_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "Exercises",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_WorkoutSessionExercises_WorkoutSessions_WorkoutSessionId",
+                        column: x => x.WorkoutSessionId,
+                        principalTable: "WorkoutSessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -125,6 +176,12 @@ namespace Jimy.Data.Migrations
                 name: "IX_ActivityLogs_WorkoutPlanId",
                 table: "ActivityLogs",
                 column: "WorkoutPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Exercises_Name",
+                table: "Exercises",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Username",
@@ -146,6 +203,21 @@ namespace Jimy.Data.Migrations
                 name: "IX_WorkoutPlans_UserId",
                 table: "WorkoutPlans",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutSessionExercises_ExerciseId",
+                table: "WorkoutSessionExercises",
+                column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutSessionExercises_WorkoutSessionId",
+                table: "WorkoutSessionExercises",
+                column: "WorkoutSessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkoutSessions_WorkoutPlanId",
+                table: "WorkoutSessions",
+                column: "WorkoutPlanId");
         }
 
         /// <inheritdoc />
@@ -158,7 +230,13 @@ namespace Jimy.Data.Migrations
                 name: "WorkoutExercises");
 
             migrationBuilder.DropTable(
+                name: "WorkoutSessionExercises");
+
+            migrationBuilder.DropTable(
                 name: "Exercises");
+
+            migrationBuilder.DropTable(
+                name: "WorkoutSessions");
 
             migrationBuilder.DropTable(
                 name: "WorkoutPlans");

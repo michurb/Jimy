@@ -1,4 +1,5 @@
 ﻿@page "/workout-plans"
+@using Jimy.Blazor.Pages.WorkoutSession
 @using Jimy.Blazor.Services
 @using Jimy.Business.DTOs
 @inject ApiService ApiService
@@ -18,6 +19,11 @@ else
             <div class="bg-white shadow rounded-lg p-4">
                 <h2 class="text-xl font-semibold">@plan.Name</h2>
                 <p class="text-sm text-gray-500">Created: @plan.CreatedDate.ToShortDateString()</p>
+                <div>
+                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" @onclick="() => StartSession(plan.Id)">
+                        Start Session
+                    </button>
+                </div>
                 <div class="mt-4">
                     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
                             @onclick="() => EditWorkoutPlan(plan.Id)">
@@ -49,7 +55,7 @@ else
     private async Task LoadWorkoutPlans()
     {
         // TODO: Replace with actual user ID
-        Guid userId = Guid.Empty;
+        Guid userId = new Guid("00000000-0000-0000-0000-000000000001");
         _workoutPlans = await ApiService.GetWorkoutPlansAsync(userId);
     }
 
@@ -67,5 +73,17 @@ else
     private void CreateWorkoutPlan()
     {
         NavigationManager.NavigateTo("/workout-plans/create");
+    }
+    private async Task StartSession(int workoutPlanId)
+    {
+        var sessionDto = new CreateWorkoutSessionDto
+        {
+            UserId = new Guid("00000000-0000-0000-0000-000000000001"), // TODO: Replace with actual user ID
+            WorkoutPlanId = workoutPlanId,
+            Exercises = new List<CreateWorkoutSessionExerciseDto>()
+        };
+
+        await ApiService.StartWorkoutSessionAsync(sessionDto);
+        NavigationManager.NavigateTo($"/workout-sessions/{sessionId}");
     }
 }

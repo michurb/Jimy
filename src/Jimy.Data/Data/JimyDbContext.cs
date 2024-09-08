@@ -14,6 +14,8 @@ public class JimyDbContext : DbContext
     public DbSet<Exercise> Exercises { get; set; }
     public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
+    public DbSet<WorkoutSession> WorkoutSessions { get; set; }
+    public DbSet<WorkoutSessionExercise> WorkoutSessionExercises { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,10 +30,10 @@ public class JimyDbContext : DbContext
         // Configure WorkoutPlan entity
         modelBuilder.Entity<WorkoutPlan>(entity =>
         {
-            entity.HasOne<User>()
+            entity.HasOne(wp => wp.User)
                 .WithMany()
-                .HasForeignKey(wp => wp.UserId);
-            entity.Property(wp => wp.Name).HasMaxLength(100);
+                .HasForeignKey(wp => wp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Configure Exercise entity
@@ -45,12 +47,15 @@ public class JimyDbContext : DbContext
         // Configure WorkoutExercise entity
         modelBuilder.Entity<WorkoutExercise>(entity =>
         {
-            entity.HasOne<WorkoutPlan>()
+            entity.HasOne(we => we.WorkoutPlan)
+                .WithMany(wp => wp.Exercises)
+                .HasForeignKey(we => we.WorkoutPlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(we => we.Exercise)
                 .WithMany()
-                .HasForeignKey(we => we.WorkoutPlanId);
-            entity.HasOne<Exercise>()
-                .WithMany()
-                .HasForeignKey(we => we.ExerciseId);
+                .HasForeignKey(we => we.ExerciseId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Configure ActivityLog entity
@@ -63,6 +68,16 @@ public class JimyDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(al => al.WorkoutPlanId);
             entity.Property(al => al.ActivityType).HasMaxLength(50);
+        });
+        
+        //Configure WorkoutSessionExercise entity
+        modelBuilder.Entity<WorkoutSessionExercise>(entity =>
+        {
+            entity.HasOne(wse => wse.Exercise)
+                .WithMany()
+                .HasForeignKey(wse => wse.ExerciseId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.Weight).HasColumnType("decimal(5,2)");
         });
     }
 }

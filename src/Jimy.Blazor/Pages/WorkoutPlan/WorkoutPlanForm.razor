@@ -1,0 +1,155 @@
+﻿@page "/workout-plans/create"
+@page "/workout-plans/edit/{Id:int}"
+@using System.ComponentModel.DataAnnotations
+@using Jimy.Blazor.Services
+@using Jimy.Business.DTOs
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<h1 class="text-2xl font-bold mb-4">@(_isEditing ? "Edit" : "Create") Workout Plan</h1>
+
+<EditForm Model="_workoutPlan" OnValidSubmit="HandleSubmit" class="max-w-md">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-4">
+        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+        <InputText id="name" @bind-Value="_workoutPlan.Name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+        <ValidationMessage For="@(() => _workoutPlan.Name)" />
+    </div>
+
+    <h2 class="text-xl font-bold mb-2">Exercises</h2>
+    @foreach (var exercise in _workoutPlan.Exercises)
+    {
+        <div class="mb-4 p-4 border rounded">
+            <div class="mb-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Exercise</label>
+                <InputSelect @bind-Value="exercise.ExerciseId" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Select an exercise</option>
+                    @foreach (var availableExercise in _availableExercises)
+                    {
+                        <option value="@availableExercise.Id">@availableExercise.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Sets</label>
+                <InputNumber @bind-Value="exercise.Sets" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            </div>
+            <div class="mb-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Reps</label>
+                <InputNumber @bind-Value="exercise.Reps" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            </div>
+            <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" @onclick="() => RemoveExercise(exercise)">
+                Remove Exercise
+            </button>
+        </div>
+    }
+
+    <button type="button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4" @onclick="AddExercise">
+        Add Exercise
+    </button>
+
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        @(_isEditing ? "Update" : "Create") Workout Plan
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private bool _isEditing => Id.HasValue;
+    private WorkoutPlanFormModel _workoutPlan = new();
+    private List<ExerciseDto> _availableExercises = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _availableExercises = (await ApiService.GetExercisesAsync()).ToList();
+
+        if (_isEditing)
+        {
+            var plan = await ApiService.GetWorkoutPlanAsync(Id.Value);
+            _workoutPlan = new WorkoutPlanFormModel
+            {
+                Name = plan.Name,
+                Exercises = plan.Exercises.Select(e => new WorkoutExerciseFormModel
+                {
+                    Id = e.Id,
+                    ExerciseId = e.ExerciseId,
+                    Sets = e.Sets,
+                    Reps = e.Reps
+                }).ToList()
+            };
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_isEditing)
+        {
+            var updateDto = new UpdateWorkoutPlanDto(
+                _workoutPlan.Name,
+                _workoutPlan.Exercises.Select(e => new UpdateWorkoutExerciseDto(
+                    e.Id,
+                    e.ExerciseId,
+                    e.Sets,
+                    e.Reps
+                )).ToList()
+            );
+            await ApiService.UpdateWorkoutPlanAsync(Id.Value, updateDto);
+        }
+        else
+        {
+            // TODO: Replace with actual user ID
+            Guid userId = new Guid("00000000-0000-0000-0000-000000000001");
+            var createDto = new CreateWorkoutPlanDto(
+                userId,
+                _workoutPlan.Name,
+                _workoutPlan.Exercises.Select(e => new CreateWorkoutExerciseDto(
+                    e.ExerciseId,
+                    e.Sets,
+                    e.Reps
+                )).ToList()
+            );
+            await ApiService.CreateWorkoutPlanAsync(createDto);
+        }
+
+        NavigationManager.NavigateTo("/workout-plans");
+    }
+
+
+    private void AddExercise()
+    {
+        _workoutPlan.Exercises.Add(new WorkoutExerciseFormModel());
+    }
+
+    private void RemoveExercise(WorkoutExerciseFormModel exercise)
+    {
+        _workoutPlan.Exercises.Remove(exercise);
+    }
+
+    public class WorkoutPlanFormModel
+    {
+        [Required]
+        [StringLength(100, ErrorMessage = "Name is too long.")]
+        public string Name { get; set; } = string.Empty;
+
+        public List<WorkoutExerciseFormModel> Exercises { get; set; } = new();
+    }
+
+    public class WorkoutExerciseFormModel
+    {
+        public int? Id { get; set; }
+
+        [Required(ErrorMessage = "Please select an exercise.")]
+        public int ExerciseId { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Sets must be greater than 0.")]
+        public int Sets { get; set; }
+
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Reps must be greater than 0.")]
+        public int Reps { get; set; }
+    }
+}

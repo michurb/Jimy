@@ -37,7 +37,8 @@ internal sealed class ErrorHandlingMiddleware
             case UserNotFoundException
                 or ActivityLogNotFoundException
                 or WorkoutPlanNotFoundException
-                or ExerciseNotFoundException:
+                or ExerciseNotFoundException
+                or WorkoutSessionNotFoundException:
                 code = HttpStatusCode.NotFound;
                 message = exception.Message;
                 break;
@@ -51,6 +52,11 @@ internal sealed class ErrorHandlingMiddleware
                 or UsernameAlreadyInUseException
                 or ExerciseAlreadyExistsException:
                 code = HttpStatusCode.Conflict;
+                message = exception.Message;
+                break;
+            
+            case WorkoutSessionAlreadyEndedException:
+                code = HttpStatusCode.BadRequest;
                 message = exception.Message;
                 break;
 

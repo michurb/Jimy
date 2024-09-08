@@ -1,0 +1,73 @@
+﻿@page "/workout-sessions/{Id:int}"
+@using Jimy.Blazor.Services
+@using Jimy.Business.DTOs
+@inject ApiService ApiService
+@inject NavigationManager NavigationManager
+
+<h1 class="text-2xl font-bold mb-4">Workout Session Details</h1>
+
+@if (_session == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="bg-white shadow rounded-lg p-4">
+        <h2 class="text-xl font-semibold">@_session.WorkoutPlan.Name</h2>
+        <p class="text-gray-600">Started: @_session.StartTime.ToShortDateString() @_session.StartTime.ToShortTimeString()</p>
+        <p class="text-gray-600">Ended: @(_session.EndTime?.ToShortDateString() ?? "Ongoing")</p>
+
+        <h3 class="text-lg font-semibold mt-4 mb-2">Exercises</h3>
+        <table class="w-full">
+            <thead>
+                <tr>
+                    <th class="text-left">Exercise</th>
+                    <th class="text-left">Sets</th>
+                    <th class="text-left">Reps</th>
+                    <th class="text-left">Weight</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var exercise in _session.Exercises)
+                {
+                    <tr>
+                        <td>@exercise.ExerciseName</td>
+                        <td>@exercise.Sets</td>
+                        <td>@exercise.Reps</td>
+                        <td>@exercise.Weight</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (_session.EndTime == null)
+        {
+            <button @onclick="EndSession" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                End Session
+            </button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private WorkoutSessionDto _session;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSession();
+    }
+
+    private async Task LoadSession()
+    {
+        _session = await ApiService.GetWorkoutSessionAsync(Id);
+    }
+
+    private async Task EndSession()
+    {
+        await ApiService.EndWorkoutSessionAsync(Id);
+        await LoadSession();
+    }
+}

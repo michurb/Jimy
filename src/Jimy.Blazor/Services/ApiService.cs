@@ -79,4 +79,26 @@ public class ApiService
     public async Task DeleteActivityLogAsync(int id) =>
         await _httpClient.DeleteAsync($"activitylogs/{id}");
     
+    //WorkoutSession
+    
+    public async Task<WorkoutSessionDto> GetWorkoutSessionAsync(int id)
+    {
+        return await _httpClient.GetFromJsonAsync<WorkoutSessionDto>($"workoutsessions/{id}");
+    }
+
+    public async Task EndWorkoutSessionAsync(int id)
+    {
+        await _httpClient.PostAsync($"workoutsessions/{id}/end", null);
+    }
+    
+    public async Task<IEnumerable<WorkoutSessionDto>> GetUserWorkoutSessionsAsync(Guid userId)
+    {
+        return await _httpClient.GetFromJsonAsync<IEnumerable<WorkoutSessionDto>>($"workoutsessions/user/{userId}");
+    }
+    
+    public async Task StartWorkoutSessionAsync(CreateWorkoutSessionDto workoutSession)
+    {
+        await _httpClient.PostAsJsonAsync("workoutsessions/start", workoutSession);
+    }
+    
 }

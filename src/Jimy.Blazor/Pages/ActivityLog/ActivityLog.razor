@@ -50,7 +50,7 @@ else
     private async Task LoadActivityLogs()
     {
         // TODO: Replace with actual user ID
-        Guid userId = Guid.Empty;
+        Guid userId = new Guid("00000000-0000-0000-0000-000000000001");
         _activityLogs = await ApiService.GetActivityLogsAsync(userId);
     }
 
