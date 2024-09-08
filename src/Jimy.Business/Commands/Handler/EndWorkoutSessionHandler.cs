@@ -22,16 +22,18 @@ public class EndWorkoutSessionHandler : ICommandHandler<EndWorkoutSession>
         if (workoutSession.EndTime.HasValue)
             throw new WorkoutSessionAlreadyEndedException(command.WorkoutSessionId);
 
-        var endTime = DateTime.UtcNow;
-        var duration = endTime - workoutSession.StartTime;
+        workoutSession.EndTime = DateTime.UtcNow;
 
-        // Cap the duration at 10 hours
-        if (duration > TimeSpan.FromHours(10))
+        // Update the exercises
+        foreach (var updatedExercise in command.UpdatedExercises)
         {
-            endTime = workoutSession.StartTime.AddHours(10);
+            var exercise = workoutSession.Exercises.FirstOrDefault(e => e.Id == updatedExercise.Id);
+            if (exercise != null)
+            {
+                exercise.Weight = updatedExercise.Weight;
+            }
         }
 
-        workoutSession.EndTime = endTime;
         await _repository.UpdateAsync(workoutSession);
     }
 }

@@ -13,12 +13,31 @@ public class WorkoutPlanRepository : GenericRepository<WorkoutPlan>, IWorkoutPla
 
     public async Task<IEnumerable<WorkoutPlan>> GetByUserIdAsync(Guid userId)
     {
-        return await _dbSet.Where(wp => wp.UserId == userId).ToListAsync();
+        return await _dbSet
+            .Include(wp => wp.Exercises)
+            .ThenInclude(we => we.Exercise)
+            .Where(wp => wp.UserId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<WorkoutPlan> GetByIdWithExercisesAsync(int id)
+    {
+        return await _dbSet
+            .Include(wp => wp.Exercises)
+            .ThenInclude(we => we.Exercise)
+            .FirstOrDefaultAsync(wp => wp.Id == id);
     }
 
     public override async Task<WorkoutPlan> AddAsync(WorkoutPlan workoutPlan)
     {
         workoutPlan.CreatedDate = DateTime.UtcNow;
-        return await base.AddAsync(workoutPlan);
+        var entry = await _dbSet.AddAsync(workoutPlan);
+        await _context.SaveChangesAsync();
+        
+        await _context.Entry(entry.Entity)
+            .Collection(w => w.Exercises)
+            .LoadAsync();
+
+        return entry.Entity;
     }
 }

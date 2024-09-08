@@ -1,5 +1,4 @@
 ﻿@page "/workout-plans"
-@using Jimy.Blazor.Pages.WorkoutSession
 @using Jimy.Blazor.Services
 @using Jimy.Business.DTOs
 @inject ApiService ApiService
@@ -19,8 +18,8 @@ else
             <div class="bg-white shadow rounded-lg p-4">
                 <h2 class="text-xl font-semibold">@plan.Name</h2>
                 <p class="text-sm text-gray-500">Created: @plan.CreatedDate.ToShortDateString()</p>
-                <div>
-                    <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" @onclick="() => StartSession(plan.Id)">
+                <div class="mt-2">
+                    <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @onclick="() => StartSession(plan)">
                         Start Session
                     </button>
                 </div>
@@ -38,14 +37,14 @@ else
         }
     </div>
 
-    <button class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+    <button class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             @onclick="CreateWorkoutPlan">
         Create New Workout Plan
     </button>
 }
 
 @code {
-    private IEnumerable<WorkoutPlanDto>? _workoutPlans;
+    private IEnumerable<WorkoutPlanDto> _workoutPlans;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,7 +54,7 @@ else
     private async Task LoadWorkoutPlans()
     {
         // TODO: Replace with actual user ID
-        Guid userId = new Guid("00000000-0000-0000-0000-000000000001");
+        var userId = new Guid("00000000-0000-0000-0000-000000000001");
         _workoutPlans = await ApiService.GetWorkoutPlansAsync(userId);
     }
 
@@ -74,16 +73,24 @@ else
     {
         NavigationManager.NavigateTo("/workout-plans/create");
     }
-    private async Task StartSession(int workoutPlanId)
+
+    private async Task StartSession(WorkoutPlanDto plan)
     {
         var sessionDto = new CreateWorkoutSessionDto
         {
-            UserId = new Guid("00000000-0000-0000-0000-000000000001"), // TODO: Replace with actual user ID
-            WorkoutPlanId = workoutPlanId,
-            Exercises = new List<CreateWorkoutSessionExerciseDto>()
+            UserId = plan.UserId,
+            WorkoutPlanId = plan.Id,
+            Exercises = plan.Exercises.Select(e => new CreateWorkoutSessionExerciseDto
+            {
+                ExerciseId = e.ExerciseId,
+                Sets = e.Sets,
+                Reps = e.Reps,
+                Weight = 0 // Default weight, to be updated during the session
+            }).ToList()
         };
 
-        await ApiService.StartWorkoutSessionAsync(sessionDto);
+        var sessionId = await ApiService.StartWorkoutSessionAsync(sessionDto);
         NavigationManager.NavigateTo($"/workout-sessions/{sessionId}");
     }
+
 }

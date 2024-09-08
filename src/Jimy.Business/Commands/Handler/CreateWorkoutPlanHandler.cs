@@ -8,11 +8,12 @@ namespace Jimy.Business.Commands.Handler;
 
 public class CreateWorkoutPlanHandler : ICommandHandler<CreateWorkoutPlan>
 {
+    private readonly IExerciseRepository _exerciseRepository;
     private readonly IMapper _mapper;
     private readonly IWorkoutPlanRepository _repository;
-    private readonly IExerciseRepository _exerciseRepository;
 
-    public CreateWorkoutPlanHandler(IWorkoutPlanRepository repository, IExerciseRepository exerciseRepository, IMapper mapper)
+    public CreateWorkoutPlanHandler(IWorkoutPlanRepository repository, IExerciseRepository exerciseRepository,
+        IMapper mapper)
     {
         _repository = repository;
         _exerciseRepository = exerciseRepository;
@@ -21,18 +22,26 @@ public class CreateWorkoutPlanHandler : ICommandHandler<CreateWorkoutPlan>
 
     public async Task HandleAsync(CreateWorkoutPlan command)
     {
-        var workoutPlan = _mapper.Map<WorkoutPlan>(command.Dto);
-        
+        var workoutPlan = new WorkoutPlan
+        {
+            UserId = command.Dto.UserId,
+            Name = command.Dto.Name,
+            CreatedDate = DateTime.UtcNow,
+            Exercises = new List<WorkoutExercise>()
+        };
+
         foreach (var exerciseDto in command.Dto.Exercises)
         {
             var exercise = await _exerciseRepository.GetByIdAsync(exerciseDto.ExerciseId);
-            if (exercise == null)
+            if (exercise == null) throw new ExerciseNotFoundException(exerciseDto.ExerciseId);
+
+            var workoutExercise = new WorkoutExercise
             {
-                throw new ExerciseNotFoundException(exerciseDto.ExerciseId);
-            }
-            
-            var workoutExercise = _mapper.Map<WorkoutExercise>(exerciseDto);
-            workoutExercise.Exercise = exercise;
+                ExerciseId = exercise.Id,
+                Sets = exerciseDto.Sets,
+                Reps = exerciseDto.Reps
+            };
+
             workoutPlan.Exercises.Add(workoutExercise);
         }
 

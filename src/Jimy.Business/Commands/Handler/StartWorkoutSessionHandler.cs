@@ -37,5 +37,6 @@ public class StartWorkoutSessionHandler : ICommandHandler<StartWorkoutSession>
         };
 
         await _repository.AddAsync(workoutSession);
+        command.SessionId = workoutSession.Id;
     }
 }

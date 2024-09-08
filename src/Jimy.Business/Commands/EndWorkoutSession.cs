@@ -3,4 +3,14 @@ using Jimy.Business.DTOs;
 
 namespace Jimy.Business.Commands;
 
-public record EndWorkoutSession(int WorkoutSessionId) : ICommand;
+public class EndWorkoutSession : ICommand
+{
+    public int WorkoutSessionId { get; }
+    public List<WorkoutSessionExerciseDto> UpdatedExercises { get; }
+
+    public EndWorkoutSession(int workoutSessionId, List<WorkoutSessionExerciseDto> updatedExercises)
+    {
+        WorkoutSessionId = workoutSessionId;
+        UpdatedExercises = updatedExercises;
+    }
+}

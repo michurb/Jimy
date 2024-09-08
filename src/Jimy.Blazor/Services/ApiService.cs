@@ -86,9 +86,10 @@ public class ApiService
         return await _httpClient.GetFromJsonAsync<WorkoutSessionDto>($"workoutsessions/{id}");
     }
 
-    public async Task EndWorkoutSessionAsync(int id)
+    public async Task EndWorkoutSessionAsync(int id, List<WorkoutSessionExerciseDto> updatedExercises)
     {
-        await _httpClient.PostAsync($"workoutsessions/{id}/end", null);
+        var response = await _httpClient.PostAsJsonAsync($"workoutsessions/{id}/end", updatedExercises);
+        response.EnsureSuccessStatusCode();
     }
     
     public async Task<IEnumerable<WorkoutSessionDto>> GetUserWorkoutSessionsAsync(Guid userId)
@@ -96,9 +97,11 @@ public class ApiService
         return await _httpClient.GetFromJsonAsync<IEnumerable<WorkoutSessionDto>>($"workoutsessions/user/{userId}");
     }
     
-    public async Task StartWorkoutSessionAsync(CreateWorkoutSessionDto workoutSession)
+    public async Task<int> StartWorkoutSessionAsync(CreateWorkoutSessionDto workoutSession)
     {
-        await _httpClient.PostAsJsonAsync("workoutsessions/start", workoutSession);
+        var response = await _httpClient.PostAsJsonAsync("workoutsessions/start", workoutSession);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<int>();
     }
     
 }

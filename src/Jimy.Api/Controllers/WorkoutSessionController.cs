@@ -40,9 +40,9 @@ public class WorkoutSessionsController : ControllerBase
     }
 
     [HttpPut("{id}/end")]
-    public async Task<IActionResult> EndWorkoutSession(int id)
+    public async Task<IActionResult> EndWorkoutSession(int id, [FromBody] List<WorkoutSessionExerciseDto> updatedExercises)
     {
-        await _endWorkoutSessionHandler.HandleAsync(new EndWorkoutSession(id));
+        await _endWorkoutSessionHandler.HandleAsync(new EndWorkoutSession(id, updatedExercises));
         return Ok();
     }
 

@@ -19,7 +19,7 @@ public class GetWorkoutPlanHandler : IQueryHandler<GetWorkoutPlan, WorkoutPlanDt
 
     public async Task<WorkoutPlanDto> HandleAsync(GetWorkoutPlan query)
     {
-        var workoutPlan = await _repository.GetByIdAsync(query.Id);
+        var workoutPlan = await _repository.GetByIdWithExercisesAsync(query.Id);
         if (workoutPlan == null)
             throw new WorkoutPlanNotFoundException(query.Id);
 

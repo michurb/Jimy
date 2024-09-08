@@ -4,7 +4,7 @@
 @inject ApiService ApiService
 @inject NavigationManager NavigationManager
 
-<h1 class="text-2xl font-bold mb-4">Workout Session Details</h1>
+<h1 class="text-2xl font-bold mb-4">Workout Session</h1>
 
 @if (_session == null)
 {
@@ -15,45 +15,47 @@ else
     <div class="bg-white shadow rounded-lg p-4">
         <h2 class="text-xl font-semibold">@_session.WorkoutPlan.Name</h2>
         <p class="text-gray-600">Started: @_session.StartTime.ToShortDateString() @_session.StartTime.ToShortTimeString()</p>
-        <p class="text-gray-600">Ended: @(_session.EndTime?.ToShortDateString() ?? "Ongoing")</p>
 
-        <h3 class="text-lg font-semibold mt-4 mb-2">Exercises</h3>
-        <table class="w-full">
-            <thead>
-                <tr>
-                    <th class="text-left">Exercise</th>
-                    <th class="text-left">Sets</th>
-                    <th class="text-left">Reps</th>
-                    <th class="text-left">Weight</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var exercise in _session.Exercises)
-                {
-                    <tr>
-                        <td>@exercise.ExerciseName</td>
-                        <td>@exercise.Sets</td>
-                        <td>@exercise.Reps</td>
-                        <td>@exercise.Weight</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <div class="mt-4">
+            <h3 class="text-lg font-semibold">Timer</h3>
+            <div class="flex items-center">
+                <input type="number" @bind="_timerMinutes" min="1" max="60" class="w-16 px-2 py-1 border rounded mr-2"/>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @onclick="ToggleTimer">
+                    @(_isTimerRunning ? "Stop" : "Start") Timer
+                </button>
+            </div>
+            <p class="mt-2">Time remaining: @_timeRemaining</p>
+        </div>
 
-        @if (_session.EndTime == null)
+        <h3 class="text-lg font-semibold mt-4">Exercises</h3>
+        @foreach (var exercise in _mutableExercises)
         {
-            <button @onclick="EndSession" class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                End Session
-            </button>
+            <div class="mt-2">
+                <h4 class="font-medium">@exercise.ExerciseName</h4>
+                <p>Sets: @exercise.Sets, Reps: @exercise.Reps</p>
+                <div class="flex items-center mt-1">
+                    <label class="mr-2">Weight:</label>
+                    <input type="number" @bind="exercise.Weight" min="0" step="0.5" class="w-20 px-2 py-1 border rounded"/>
+                    <span class="ml-1">kg</span>
+                </div>
+            </div>
         }
+
+        <button class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" @onclick="EndSession">
+            End Session
+        </button>
     </div>
 }
 
 @code {
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter] public int Id { get; set; }
 
     private WorkoutSessionDto _session;
+    private List<MutableWorkoutSessionExercise> _mutableExercises = new();
+    private int _timerMinutes = 1;
+    private bool _isTimerRunning;
+    private Timer _timer;
+    private TimeSpan _timeRemaining;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,11 +65,72 @@ else
     private async Task LoadSession()
     {
         _session = await ApiService.GetWorkoutSessionAsync(Id);
+        _mutableExercises = _session.Exercises.Select(e => new MutableWorkoutSessionExercise(e)).ToList();
+    }
+
+    private void ToggleTimer()
+    {
+        if (_isTimerRunning)
+        {
+            _timer?.Dispose();
+            _isTimerRunning = false;
+        }
+        else
+        {
+            _timeRemaining = TimeSpan.FromMinutes(_timerMinutes);
+            _timer = new Timer(TimerCallback, null, 0, 1000);
+            _isTimerRunning = true;
+        }
+    }
+
+    private void TimerCallback(object state)
+    {
+        if (_timeRemaining == TimeSpan.Zero)
+        {
+            _timer?.Dispose();
+            _isTimerRunning = false;
+        }
+        else
+        {
+            _timeRemaining = _timeRemaining.Subtract(TimeSpan.FromSeconds(1));
+        }
+
+        InvokeAsync(StateHasChanged);
     }
 
     private async Task EndSession()
     {
-        await ApiService.EndWorkoutSessionAsync(Id);
-        await LoadSession();
+        var updatedExercises = _mutableExercises.Select(me => new WorkoutSessionExerciseDto(
+            me.Id, me.ExerciseId, me.ExerciseName, me.Sets, me.Reps, me.Weight
+        )).ToList();
+
+        await ApiService.EndWorkoutSessionAsync(Id, updatedExercises);
+        NavigationManager.NavigateTo("/workout-plans");
     }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+
+    private class MutableWorkoutSessionExercise
+    {
+        public int Id { get; }
+        public int ExerciseId { get; }
+        public string ExerciseName { get; }
+        public int Sets { get; }
+        public int Reps { get; }
+        public decimal Weight { get; set; }
+
+        public MutableWorkoutSessionExercise(WorkoutSessionExerciseDto dto)
+        {
+            Id = dto.Id;
+            ExerciseId = dto.ExerciseId;
+            ExerciseName = dto.ExerciseName;
+            Sets = dto.Sets;
+            Reps = dto.Reps;
+            Weight = dto.Weight;
+        }
+    }
+
 }

@@ -25,6 +25,10 @@ public class AutoMapperProfile : Profile
         CreateMap<CreateWorkoutPlanDto, WorkoutPlan>();
         CreateMap<UpdateWorkoutPlanDto, WorkoutPlan>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<WorkoutExercise, WorkoutExerciseDto>()
+            .ForMember(dest => dest.ExerciseName, opt => opt.MapFrom(src => src.Exercise.Name));
+
+        CreateMap<CreateWorkoutExerciseDto, WorkoutExercise>();
 
         // Exercise mappings
         CreateMap<Exercise, ExerciseDto>();

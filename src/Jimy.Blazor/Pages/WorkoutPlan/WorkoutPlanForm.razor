@@ -8,7 +8,7 @@
 
 <h1 class="text-2xl font-bold mb-4">@(_isEditing ? "Edit" : "Create") Workout Plan</h1>
 
-<EditForm Model="_workoutPlan" OnValidSubmit="HandleSubmit" class="max-w-md">
+<EditForm Model="@_workoutPlan" OnValidSubmit="@HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -21,29 +21,32 @@
     <h2 class="text-xl font-bold mb-2">Exercises</h2>
     @foreach (var exercise in _workoutPlan.Exercises)
     {
-        <div class="mb-4 p-4 border rounded">
-            <div class="mb-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Exercise</label>
-                <InputSelect @bind-Value="exercise.ExerciseId" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <option value="">Select an exercise</option>
-                    @foreach (var availableExercise in _availableExercises)
-                    {
-                        <option value="@availableExercise.Id">@availableExercise.Name</option>
-                    }
-                </InputSelect>
-            </div>
-            <div class="mb-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Sets</label>
-                <InputNumber @bind-Value="exercise.Sets" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-            </div>
-            <div class="mb-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Reps</label>
-                <InputNumber @bind-Value="exercise.Reps" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-            </div>
-            <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" @onclick="() => RemoveExercise(exercise)">
-                Remove Exercise
-            </button>
+    <div class="mb-4 p-4 border rounded">
+        <div class="mb-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Exercise</label>
+            <InputSelect @bind-Value="exercise.ExerciseId" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="">Select an exercise</option>
+                @foreach (var availableExercise in _availableExercises)
+                {
+                <option value="@availableExercise.Id">@availableExercise.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => exercise.ExerciseId)" />
         </div>
+        <div class="mb-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Sets</label>
+            <InputNumber @bind-Value="exercise.Sets" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <ValidationMessage For="@(() => exercise.Sets)" />
+        </div>
+        <div class="mb-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Reps</label>
+            <InputNumber @bind-Value="exercise.Reps" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <ValidationMessage For="@(() => exercise.Reps)" />
+        </div>
+        <button type="button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" @onclick="() => RemoveExercise(exercise)">
+            Remove Exercise
+        </button>
+    </div>
     }
 
     <button type="button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4" @onclick="AddExercise">
@@ -54,6 +57,7 @@
         @(_isEditing ? "Update" : "Create") Workout Plan
     </button>
 </EditForm>
+
 
 @code {
     [Parameter] public int? Id { get; set; }
@@ -79,6 +83,13 @@
                     Sets = e.Sets,
                     Reps = e.Reps
                 }).ToList()
+            };
+        }
+        else
+        {
+            _workoutPlan = new WorkoutPlanFormModel
+            {
+                Exercises = new List<WorkoutExerciseFormModel>()
             };
         }
     }
