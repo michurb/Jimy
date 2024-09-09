@@ -1,4 +1,6 @@
-﻿namespace Jimy.Core.Entities;
+﻿using Jimy.Core.ValueObjects;
+
+namespace Jimy.Core.Entities;
 
 public class Exercise
 {
