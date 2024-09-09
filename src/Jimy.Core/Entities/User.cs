@@ -2,24 +2,35 @@
 
 public class User
 {
-    public Guid Id { get; private set; }
-    public string Username { get; private set; }
-    public string Email { get; private set; }
-    public DateTime DateJoined { get; private set; }
+    public UserId Id { get; private set; }
+    public Email Email { get; private set; }
+    public Username Username { get; private set; }
+    public Password Password { get; private set; }
+    public FullName FullName { get; private set; }
+    public Role Role { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    protected User() {}
+    private User() {}
 
-    public User(string username, string email)
+    public User(UserId id, Email email, Username username, Password password, FullName fullName, Role role, DateTime createdAt)
     {
-        Id = Guid.NewGuid();
-        Username = username;
+        Id = id;
         Email = email;
-        DateJoined = DateTime.UtcNow;
+        Username = username;
+        Password = password;
+        FullName = fullName;
+        Role = role;
+        CreatedAt = createdAt;
     }
 
-    public void UpdateDetails(string username, string email)
+    public void UpdateDetails(Username username, Email email)
     {
         Username = username;
         Email = email;
+    }
+
+    public void ChangePassword(Password newPassword)
+    {
+        Password = newPassword;
     }
 }

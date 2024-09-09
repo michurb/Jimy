@@ -2,19 +2,20 @@
 
 public class Exercise
 {
-    public int Id { get; private set; }
-    public string Name { get; private set; }
-    public string Description { get; private set; }
+    public ExerciseId Id { get; private set; }
+    public ExerciseName Name { get; private set; }
+    public ExerciseDescription Description { get; private set; }
 
-    protected Exercise() {}
+    private Exercise() {}
 
-    public Exercise(string name, string description)
+    public Exercise(ExerciseId id, ExerciseName name, ExerciseDescription description)
     {
+        Id = id;
         Name = name;
         Description = description;
     }
 
-    public void UpdateDetails(string name, string description)
+    public void UpdateDetails(ExerciseName name, ExerciseDescription description)
     {
         Name = name;
         Description = description;

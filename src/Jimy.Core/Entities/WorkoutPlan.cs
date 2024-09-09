@@ -2,28 +2,34 @@
 
 public class WorkoutPlan
 {
-    public int Id { get; private set; }
-    public Guid UserId { get; private set; }
-    public string Name { get; private set; }
+    public WorkoutPlanId Id { get; private set; }
+    public UserId UserId { get; private set; }
+    public WorkoutPlanName Name { get; private set; }
     public DateTime CreatedDate { get; private set; }
-    public ICollection<WorkoutExercise> Exercises { get; private set; }
+    private readonly List<WorkoutExercise> _exercises = new();
+    public IReadOnlyCollection<WorkoutExercise> Exercises => _exercises.AsReadOnly();
 
-    protected WorkoutPlan() {}
+    private WorkoutPlan() {} // For EF Core
 
-    public WorkoutPlan(Guid userId, string name)
+    public WorkoutPlan(WorkoutPlanId id, UserId userId, WorkoutPlanName name, DateTime createdDate)
     {
+        Id = id;
         UserId = userId;
         Name = name;
-        CreatedDate = DateTime.UtcNow;
-        Exercises = new List<WorkoutExercise>();
+        CreatedDate = createdDate;
     }
 
-    public void AddExercise(Exercise exercise, int sets, int reps)
+    public void AddExercise(ExerciseId exerciseId, Sets sets, Reps reps)
     {
-        Exercises.Add(new WorkoutExercise(this, exercise, sets, reps));
+        _exercises.Add(new WorkoutExercise(exerciseId, sets, reps));
     }
 
-    public void UpdateName(string name)
+    public void RemoveExercise(ExerciseId exerciseId)
+    {
+        _exercises.RemoveAll(e => e.ExerciseId == exerciseId);
+    }
+
+    public void UpdateName(WorkoutPlanName name)
     {
         Name = name;
     }

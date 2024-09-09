@@ -1,0 +1,4 @@
+User can create WorkoutPlan.
+Based on WorkoutPlan user can start training Session which conatains exercises from WorkoutPlan + in every set user can enter weight used during this set.
+User can create Exercise.
+User can add any Activity passing name, duration, description(optional).

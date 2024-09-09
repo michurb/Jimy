@@ -1,6 +1,6 @@
 ﻿namespace Jimy.Core.Exceptions;
 
-public class UserNotFoundException : CoreException
+public sealed class UserNotFoundException : CoreException
 {
     public UserNotFoundException(Guid userId) 
         : base($"User with ID {userId} was not found.") {}
