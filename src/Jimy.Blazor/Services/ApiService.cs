@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Json;
 using Jimy.Business.DTOs;
-using Jimy.Data.Entities;
 
 namespace Jimy.Blazor.Services;
 

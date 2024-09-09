@@ -17,8 +17,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Jimy.Blazor\Jimy.Blazor.csproj"/>
-        <ProjectReference Include="..\Jimy.Business\Jimy.Business.csproj"/>
-        <ProjectReference Include="..\Jimy.Data\Jimy.Data.csproj"/>
     </ItemGroup>
 
 </Project>
