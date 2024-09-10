@@ -18,32 +18,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddApplication();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
-
-builder.Services.AddSwaggerGen(swagger =>
-{
-    swagger.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Jimy API",
-        Version = "v1"
-    });
-});
-
-
-builder.Services.AddDbContext<JimyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Register repositories
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IWorkoutPlanRepository, WorkoutPlanRepository>();
-builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
-builder.Services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
-builder.Services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
-builder.Services.AddScoped<IWorkoutSessionRepository, WorkoutSessionRepository>();
-
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

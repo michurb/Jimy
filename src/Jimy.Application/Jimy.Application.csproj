@@ -18,12 +18,4 @@
       <ProjectReference Include="..\Jimy.Core\Jimy.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Queries\ActivityLogs\" />
-      <Folder Include="Queries\Exercises\" />
-      <Folder Include="Queries\Users\" />
-      <Folder Include="Queries\WorkoutPlans\" />
-      <Folder Include="Queries\WorkoutSessions\" />
-    </ItemGroup>
-
 </Project>
