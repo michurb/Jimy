@@ -19,7 +19,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="DTO\" />
+      <Folder Include="Queries\ActivityLogs\" />
+      <Folder Include="Queries\Exercises\" />
+      <Folder Include="Queries\Users\" />
+      <Folder Include="Queries\WorkoutPlans\" />
+      <Folder Include="Queries\WorkoutSessions\" />
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Jimy.Application.Abstraction;
 
 namespace Jimy.Application;
 
@@ -8,8 +7,13 @@ public static class Extensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        var applicationAssembly = typeof(ICommandHandler<>).Assembly;
+
+        services.Scan(s => s.FromAssemblies(applicationAssembly)
+            .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+
 
         return services;
     }

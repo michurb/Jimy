@@ -2,6 +2,6 @@
 
 public sealed class ExerciseNotFoundException : CoreException
 {
-    public ExerciseNotFoundException(int exerciseId) 
+    public ExerciseNotFoundException(Guid exerciseId) 
         : base($"Exercise with ID {exerciseId} was not found.") {}
 }

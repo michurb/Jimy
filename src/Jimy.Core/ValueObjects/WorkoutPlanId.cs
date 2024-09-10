@@ -4,12 +4,13 @@ namespace Jimy.Core.ValueObjects;
 
 public sealed record WorkoutPlanId
 {
-    public int Value { get; }
+    public Guid Value { get; }
 
-    public WorkoutPlanId(int value)
+    public WorkoutPlanId(Guid value)
     {
-        if (value <= 0)
+        if (value == Guid.Empty)
             throw new InvalidWorkoutPlanIdException();
         Value = value;
     }
+    public static WorkoutPlanId NewId() => new(Guid.NewGuid());
 }

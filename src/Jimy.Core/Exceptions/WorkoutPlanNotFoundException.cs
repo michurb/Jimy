@@ -2,6 +2,6 @@
 
 public sealed class WorkoutPlanNotFoundException : CoreException
 {
-    public WorkoutPlanNotFoundException(int workoutPlanId) 
+    public WorkoutPlanNotFoundException(Guid workoutPlanId) 
         : base($"Workout plan with ID {workoutPlanId} was not found.") {}
 }

@@ -1,6 +1,6 @@
 ﻿namespace Jimy.Application.Abstraction;
 
-public interface ICommandHandler<TCommand, TResult> where TCommand : ICommand<TResult>
+public interface ICommandHandler<in TCommand> where TCommand : class, ICommand
 {
-    Task<TResult> Handle(TCommand command);
+    Task HandleAsync(TCommand command);
 }

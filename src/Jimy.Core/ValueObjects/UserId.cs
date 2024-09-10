@@ -13,5 +13,5 @@ public sealed record UserId
         Value = value;
     }
 
-    public static UserId NewId() => new UserId(Guid.NewGuid());
+    public static UserId NewId() => new (Guid.NewGuid());
 }

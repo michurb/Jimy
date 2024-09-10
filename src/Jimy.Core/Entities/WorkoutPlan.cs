@@ -11,7 +11,7 @@ public class WorkoutPlan
     private readonly List<WorkoutExercise> _exercises = new();
     public IReadOnlyCollection<WorkoutExercise> Exercises => _exercises.AsReadOnly();
 
-    private WorkoutPlan() {} // For EF Core
+    private WorkoutPlan() {}
 
     public WorkoutPlan(WorkoutPlanId id, UserId userId, WorkoutPlanName name, DateTime createdDate)
     {
@@ -29,6 +29,11 @@ public class WorkoutPlan
     public void RemoveExercise(ExerciseId exerciseId)
     {
         _exercises.RemoveAll(e => e.ExerciseId == exerciseId);
+    }
+    
+    public void ClearExercises()
+    {
+        _exercises.Clear();
     }
 
     public void UpdateName(WorkoutPlanName name)
