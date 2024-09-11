@@ -14,4 +14,10 @@ public sealed record Username
             throw new InvalidUsernameException("Username must be between 3 and 30 characters.");
         Value = value;
     }
+    
+    public static implicit operator Username(string value) => new Username(value);
+
+    public static implicit operator string(Username value) => value?.Value;
+
+    public override string ToString() => Value;
 }

@@ -33,4 +33,7 @@ internal sealed class SqlServerUserRepository : IUserRepository
 
     public async Task DeleteAsync(UserId id)
         => _users.Remove(await GetByIdAsync(id));
+
+    public Task<User> GetByUsernameAsync(Username username)
+        => _users.SingleOrDefaultAsync(x => x.Username == username);
 }

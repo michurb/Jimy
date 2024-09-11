@@ -21,7 +21,7 @@ public static class UsersApi
             return userDto is null ? Results.NotFound() : Results.Ok(userDto);
         }).RequireAuthorization("is-admin");
 
-        app.MapPost("api/users", async (CreateUser command, ICommandHandler<CreateUser> handler) =>
+        app.MapPost("api/users", async (SignUp command, ICommandHandler<SignUp> handler) =>
         {
             command = command with { UserId = Guid.NewGuid() };
             await handler.HandleAsync(command);
