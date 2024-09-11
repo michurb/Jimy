@@ -1,11 +1,19 @@
-using Jimy.Business;
-using Jimy.Data.Data;
-using Jimy.Data.Interfaces;
-using Jimy.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Jimy.Api;
+using Jimy.Application;
+using Jimy.Core;
+using Jimy.Infrastructure;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services
+    .AddCore()
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddCors(options =>
 {
@@ -26,8 +34,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseRouting();
-app.MapControllers();
-
 app.UseCors("AllowBlazorOrigin");
+app.UseInfrastructure();
+app.MapGet("api", (IOptions<AppOptions> options) => Results.Ok(options.Value.Name));
+app.UseUsersApi();
 app.Run();

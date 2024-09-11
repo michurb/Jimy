@@ -1,5 +1,7 @@
-﻿using Jimy.Core.Interfaces;
+﻿using Jimy.Application.Abstraction;
+using Jimy.Core.Interfaces;
 using Jimy.Infrastructure.DAL;
+using Jimy.Infrastructure.DAL.Decorators;
 using Jimy.Infrastructure.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +23,8 @@ internal static class Extensions
         services.AddScoped<IExerciseRepository, SqlServerExerciseRepository>();
         services.AddScoped<IActivityLogRepository, SqlServerActivityLogRepository>();
         services.AddScoped<IWorkoutSessionRepository, SqlServerWorkoutSessionRepository>();
+        services.AddScoped<IUnitOfWork, SqlServerUnitOfWork>();
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(UnitOfWorkCommandHandlerDecorator<>));
         
         return services;
     }

@@ -18,6 +18,6 @@ public sealed record Role
         Value = value;
     }
 
-    public static Role User() => new Role("User");
-    public static Role Admin() => new Role("Admin");
+    public static Role User() => new Role("user");
+    public static Role Admin() => new Role("admin");
 }

@@ -8,6 +8,8 @@ public class WorkoutExercise
     public Exercise Exercise { get; private set; }
     public Sets Sets { get; private set; }
     public Reps Reps { get; private set; }
+    
+    private WorkoutExercise() {}
 
     public WorkoutExercise(ExerciseId exerciseId, Sets sets, Reps reps)
     {

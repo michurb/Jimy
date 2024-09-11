@@ -2,4 +2,4 @@
 
 namespace Jimy.Application.Commands.Users;
 
-public record CreateUser(string Username, string Email, string Password) : ICommand;
+public record CreateUser(Guid UserId, string Username, string Email, string Password) : ICommand;

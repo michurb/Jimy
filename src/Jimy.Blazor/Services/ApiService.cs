@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Jimy.Application.DTO;
 using Jimy.Business.DTOs;
 
 namespace Jimy.Blazor.Services;

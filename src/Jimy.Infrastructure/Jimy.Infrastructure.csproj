@@ -24,10 +24,4 @@
       <ProjectReference Include="..\Jimy.Core\Jimy.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="DAL\Handlers\ActivityLog\" />
-      <Folder Include="DAL\Handlers\Exercise\" />
-      <Folder Include="DAL\Handlers\WorkoutSession\" />
-    </ItemGroup>
-
 </Project>

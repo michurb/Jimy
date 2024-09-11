@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Jimy.Application\Jimy.Application.csproj" />
       <ProjectReference Include="..\Jimy.Business\Jimy.Business.csproj" />
     </ItemGroup>
 

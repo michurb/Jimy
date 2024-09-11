@@ -9,7 +9,8 @@ public sealed class CreateUserHandler(IUserRepository userRepository) : ICommand
 {
     public async Task HandleAsync(CreateUser command)
     {
-        var user = new User(UserId.NewId(),
+        var user = new User(
+            new UserId(command.UserId),
             new Email(command.Email),
             new Username(command.Username),
             new Password(command.Password),
