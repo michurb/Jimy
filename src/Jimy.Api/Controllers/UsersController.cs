@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Jimy.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IQueryHandler<GetUsers, IEnumerable<UserDto>> _getUsersHandler;
@@ -23,11 +23,13 @@ public class UsersController : ControllerBase
         IQueryHandler<GetUsers, IEnumerable<UserDto>> getUsersHandler,
         IQueryHandler<GetUser, UserDto> getUserHandler,
         ICommandHandler<SignUp> createUserHandler,
+        ICommandHandler<SignIn> signInHandler,
         ITokenStorage tokenStorage)
     {
         _getUsersHandler = getUsersHandler;
         _getUserHandler = getUserHandler;
         _createUserHandler = createUserHandler;
+        _signInHandler = signInHandler;
         _tokenStorage = tokenStorage;
     }
 
@@ -84,10 +86,10 @@ public class UsersController : ControllerBase
     [SwaggerOperation("Sign in the user and return the JSON Web Token")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<JwtDto>> SignIn(SignIn command)
+    public async Task<ActionResult<JwtDto>> Post(SignIn command)
     {
         await _signInHandler.HandleAsync(command);
         var jwt = _tokenStorage.Get();
-        return jwt;
+        return Ok(jwt);
     }
 }

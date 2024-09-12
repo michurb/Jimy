@@ -16,7 +16,7 @@ internal sealed class Authenticator : IAuthenticator
     private readonly TimeSpan _expiry;
     private readonly string _audience;
     private readonly SigningCredentials _signingCredentials;
-    private readonly JwtSecurityTokenHandler _jwtSecurityToken = new JwtSecurityTokenHandler();
+    private readonly JwtSecurityTokenHandler _jwtSecurityToken = new();
 
     public Authenticator(IOptions<AuthOptions> options, IClock clock)
     {

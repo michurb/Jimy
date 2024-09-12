@@ -21,7 +21,8 @@ public static class Extenions
         services.AddSingleton<ExceptionMiddleware>();
         services.AddHttpContextAccessor();
 
-        services.AddSqlServer(configuration);
+        services.AddSqlServer(configuration)
+            .AddSingleton<IClock, Clock>();
         
         services.AddCustomLogging();
         services.AddSecurity();
@@ -43,9 +44,7 @@ public static class Extenions
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
-        services
-            .AddAuth(configuration)
-            .AddSingleton<IClock, Clock>();
+        services.AddAuth(configuration);
         return services;
     }
     
