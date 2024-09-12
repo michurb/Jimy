@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Jimy.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 public class UsersController : ControllerBase
 {
     private readonly IQueryHandler<GetUsers, IEnumerable<UserDto>> _getUsersHandler;
@@ -75,7 +75,7 @@ public class UsersController : ControllerBase
     [SwaggerOperation("Create a new user account")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateUser(SignUp command)
+    public async Task<ActionResult> Post(SignUp command)
     {
         command = command with { UserId = Guid.NewGuid() };
         await _createUserHandler.HandleAsync(command);

@@ -1,6 +1,14 @@
 @Jimy.Api_HostAddress = http://localhost:5147
-
-GET {{Jimy.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+###
+POST {{Jimy.Api_HostAddress}}/users/sign-in
+Content-Type: application/json
+{
+    "email": "bobek@jimy.com",
+    "password": "sicret"
+}
+###
+@Jimy.Api_AccessToken = {{response.body.access_token}}
 
 ###
+GET {{Jimy.Api_HostAddress}}/users/me
+Autrhoization: Bearere {{Jimy.Api_AccessToken}}

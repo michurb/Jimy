@@ -9,7 +9,16 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:6287/") });
+builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("MainApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5147/");
+});
+
+builder.Services.AddHttpClient("SecondaryApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5148/");
+});
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 

@@ -7,15 +7,16 @@ namespace Jimy.Blazor.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClient;
 
-    public AuthService(HttpClient httpClient)
+    public AuthService(IHttpClientFactory httpClient)
     {
         _httpClient = httpClient;
     }
     public async Task<AuthResponseDto> SignInAsync(SignInDto signInDto)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/users/sign-in", signInDto);
+        var client = _httpClient.CreateClient("MainApi");
+        var response = await client.PostAsJsonAsync("api/users/sign-in", signInDto);
         
         if (response.IsSuccessStatusCode)
         {
@@ -34,7 +35,9 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto> SignUpAsync(SignUpDto signUpDto)
     {
-        var response = await _httpClient.PostAsJsonAsync("api/users", signUpDto);
+        var client = _httpClient.CreateClient("MainApi");
+        
+        var response = await client.PostAsJsonAsync("api/users", signUpDto);
         
         if (response.IsSuccessStatusCode)
         {
