@@ -21,6 +21,7 @@ public static class Extensions
             entity.Name.Value,
             entity.CreatedDate,
             entity.Exercises.Select(x => new WorkoutExerciseDto(
+            x.Id.Value,
             x.ExerciseId.Value,
             x.Exercise.Name.Value,
             x.Sets.Value,

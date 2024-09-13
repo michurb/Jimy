@@ -4,6 +4,7 @@ namespace Jimy.Core.Entities;
 
 public class WorkoutExercise
 {
+    public WorkoutExerciseId Id { get; set; }
     public ExerciseId ExerciseId { get; private set; }
     public Exercise Exercise { get; private set; }
     public Sets Sets { get; private set; }
@@ -11,8 +12,9 @@ public class WorkoutExercise
     
     private WorkoutExercise() {}
 
-    public WorkoutExercise(ExerciseId exerciseId, Sets sets, Reps reps)
+    public WorkoutExercise(WorkoutExerciseId id, ExerciseId exerciseId, Sets sets, Reps reps)
     {
+        Id = id;
         ExerciseId = exerciseId;
         Sets = sets;
         Reps = reps;

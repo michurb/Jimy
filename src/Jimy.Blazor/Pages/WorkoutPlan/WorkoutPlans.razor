@@ -1,0 +1,132 @@
+﻿@page "/workout-plans"
+@using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Shared
+@layout UserLayout
+@inject IWorkoutPlanService WorkoutPlanService
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<main>
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        @if (isLoading)
+        {
+            <p>Loading workout plans...</p>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">@errorMessage</span>
+            </div>
+        }
+        else if (workoutPlans != null && workoutPlans.Any())
+        {
+            <div class="px-4 py-6 sm:px-0">
+                <h2 class="text-2xl font-semibold mb-4">Workout Plans</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    @foreach (var plan in workoutPlans)
+                    {
+                        <div class="bg-white shadow-md rounded-lg p-4">
+                            <h3 class="text-lg font-semibold mb-2 text-center mx-auto">@plan.Name</h3>
+                            <div>
+                                <table class="table-auto w-full text-left">
+                                    <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-base font-semibold">Exercise Name</th>
+                                        <th class="px-4 py-2 text-base font-semibold">Sets</th>
+                                        <th class="px-4 py-2 text-base font-semibold">Reps</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach(var exercise in plan.Exercises)
+                                    {
+                                        <tr class="border-t border-gray-300">
+                                            <td class="px-4 py-2">@exercise.ExerciseName</td>
+                                            <td class="px-4 py-2 text-center">@exercise.Sets</td>
+                                            <td class="px-4 py-2 text-center">@exercise.Reps</td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-4">
+                                <button @onclick="() => OpenEditWorkoutPlanModal(plan)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                                    Edit
+                                </button>
+                                <button @onclick="() => DeleteWorkoutPlan(plan)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>No workout plans available.</p>
+        }
+    </div>
+</main>
+
+@code {
+    private UserDto currentUser;
+    private string errorMessage;
+    private bool isLoading = true;
+    private List<WorkoutPlanDto> workoutPlans;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadUserData();
+            workoutPlans = await WorkoutPlanService.GetUserWorkoutPlansAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    
+    private async Task LoadUserData()
+    {
+        try
+        {
+            isLoading = true;
+            currentUser = await AuthService.GetCurrentUserAsync();
+            errorMessage = null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            errorMessage = "You are not authorized to access this page. Please sign in.";
+            NavigateToSignIn();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+    private void NavigateToSignIn()
+    {
+        NavigationManager.NavigateTo("/signin");
+    }
+
+    private Task DeleteWorkoutPlan(WorkoutPlanDto plan)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Task OpenEditWorkoutPlanModal(WorkoutPlanDto plan)
+    {
+        throw new NotImplementedException();
+    }
+
+}

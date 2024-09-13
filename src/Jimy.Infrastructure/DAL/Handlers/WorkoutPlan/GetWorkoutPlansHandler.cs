@@ -26,6 +26,7 @@ internal sealed class GetWorkoutPlansHandler : IQueryHandler<GetUsersWorkoutPlan
                 wp.Name.Value,
                 wp.CreatedDate,
                 wp.Exercises.Select(we => new WorkoutExerciseDto(
+                    we.Id.Value,
                     we.ExerciseId.Value,
                     we.Exercise.Name.Value,
                     we.Sets.Value,

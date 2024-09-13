@@ -29,7 +29,7 @@ public sealed class UpdateWorkoutPlanHandler(
                 throw new ExerciseNotFoundException(exerciseDto.ExerciseId);
             }
 
-            workoutPlan.AddExercise(exercise.Id, new Sets(exerciseDto.Sets), new Reps(exerciseDto.Reps));
+            workoutPlan.AddExercise(new WorkoutExerciseId(exerciseDto.WorkoutExerciseId), exercise.Id, new Sets(exerciseDto.Sets), new Reps(exerciseDto.Reps));
         }
 
         await workoutPlanRepository.UpdateAsync(workoutPlan);

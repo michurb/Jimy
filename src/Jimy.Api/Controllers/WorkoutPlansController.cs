@@ -2,6 +2,7 @@
 using Jimy.Application.Commands.WorkoutPlans;
 using Jimy.Application.DTO;
 using Jimy.Application.Queries.WorkoutPlans;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jimy.Api.Controllers;
@@ -41,6 +42,7 @@ public class WorkoutPlansController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpGet("user")]
     public async Task<ActionResult<IEnumerable<WorkoutPlanDto>>> GetUserWorkoutPlans()
     {
