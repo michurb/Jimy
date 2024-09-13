@@ -1,6 +1,8 @@
 using Jimy.Blazor;
 using Jimy.Blazor.API.Interfaces;
+using Jimy.Blazor.Auth;
 using Jimy.Blazor.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -12,7 +14,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient("MainApi", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5147/");
+    client.BaseAddress = new Uri("http://localhost:6287/");
 });
 
 builder.Services.AddHttpClient("SecondaryApi", client =>
@@ -21,6 +23,9 @@ builder.Services.AddHttpClient("SecondaryApi", client =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IWorkoutPlanService, WorkoutPlanService>();
+builder.Services.AddScoped<IExerciseService, ExerciseService>();
+builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 
 
 await builder.Build().RunAsync();

@@ -41,9 +41,14 @@ public class WorkoutPlansController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("user/{userId:guid}")]
-    public async Task<ActionResult<IEnumerable<WorkoutPlanDto>>> GetUserWorkoutPlans(Guid userId)
+    [HttpGet("user")]
+    public async Task<ActionResult<IEnumerable<WorkoutPlanDto>>> GetUserWorkoutPlans()
     {
+        if (string.IsNullOrWhiteSpace(User.Identity?.Name))
+        {
+            return Unauthorized();
+        }
+        var userId = Guid.Parse(User.Identity.Name);
         var result = await _getUsersWorkoutPlansHandler.HandleAsync(new GetUsersWorkoutPlans { UserId = userId });
         return Ok(result);
     }
