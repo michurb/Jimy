@@ -12,12 +12,12 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient("MainApi", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5147/");
+    client.BaseAddress = new Uri("http://localhost:5080/");
 });
 
 builder.Services.AddHttpClient("SecondaryApi", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5148/");
+    client.BaseAddress = new Uri("https://localhost:7008/");
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
