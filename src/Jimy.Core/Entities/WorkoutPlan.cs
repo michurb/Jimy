@@ -26,9 +26,13 @@ public class WorkoutPlan
         _exercises.Add(new WorkoutExercise(id, exerciseId, sets, reps));
     }
 
-    public void RemoveExercise(ExerciseId exerciseId)
+    public void UpdateExercises(IEnumerable<(ExerciseId ExerciseId, Sets Sets, Reps Reps)> updatedExercises)
     {
-        _exercises.RemoveAll(e => e.ExerciseId == exerciseId);
+        _exercises.Clear();
+        foreach (var (exerciseId, sets, reps) in updatedExercises)
+        {
+            AddExercise(WorkoutExerciseId.NewId(), exerciseId, sets, reps);
+        }
     }
     
     public void ClearExercises()

@@ -53,4 +53,44 @@ public class WorkoutPlanService : IWorkoutPlanService
         
         throw new Exception($"Failed to get current user: {response.StatusCode}");
     }
+
+    public async Task UpdateWorkoutPlanAsync(WorkoutPlanDto workoutPlan)
+    {
+        var client = _httpClient.CreateClient("MainApi");
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        }
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        var response = await client.PutAsJsonAsync($"api/workout-plans/{workoutPlan.Id}", workoutPlan);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Failed to update workout plan: {errorContent}");
+        }
+    }
+
+    public async Task DeleteWorkoutPlanAsync(Guid workoutPlanId)
+    {
+        var client = _httpClient.CreateClient("MainApi");
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        }
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        var response = await client.DeleteAsync($"api/workout-plans/{workoutPlanId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Failed to delete workout plan: {errorContent}");
+        }
+    }
 }

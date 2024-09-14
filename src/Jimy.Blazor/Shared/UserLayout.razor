@@ -39,6 +39,8 @@
     private async Task SignOut()
     {
         await AuthService.SignOutAsync();
-        NavigationManager.NavigateTo("/signin");
+        NavigationManager.NavigateTo("/signin", true);
+        NavigationManager.Refresh();
+
     }
 }

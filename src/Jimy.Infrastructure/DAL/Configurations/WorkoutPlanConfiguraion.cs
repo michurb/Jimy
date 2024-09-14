@@ -21,7 +21,8 @@ internal sealed class WorkoutPlanConfiguraion : IEntityTypeConfiguration<Workout
 
         builder.HasMany(wp => wp.Exercises)
             .WithOne()
-            .HasForeignKey("WorkoutPlanId");
+            .HasForeignKey("WorkoutPlanId")
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Metadata.FindNavigation(nameof(WorkoutPlan.Exercises))
             .SetPropertyAccessMode(PropertyAccessMode.Field);

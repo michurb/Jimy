@@ -48,7 +48,6 @@ public class AuthService : IAuthService
         
         if (response.IsSuccessStatusCode)
         {
-            // For sign up, we might need to sign in afterwards to get the token
             return await SignInAsync(new SignInDto { Email = signUpDto.Email, Password = signUpDto.Password });
         }
         

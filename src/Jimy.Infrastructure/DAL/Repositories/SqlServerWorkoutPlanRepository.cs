@@ -29,15 +29,32 @@ internal sealed class SqlServerWorkoutPlanRepository : IWorkoutPlanRepository
     public async Task AddAsync(WorkoutPlan workoutPlan)
         => await _workoutPlans.AddAsync(workoutPlan);
 
-    public Task UpdateAsync(WorkoutPlan workoutPlan)
+    public async Task UpdateAsync(WorkoutPlan workoutPlan)
     {
+        _dbContext.Entry(workoutPlan).State = EntityState.Modified;
+        
+        var existingExercises = await _dbContext.Set<WorkoutExercise>()
+            .Where(we => EF.Property<WorkoutPlanId>(we, "WorkoutPlanId") == workoutPlan.Id)
+            .ToListAsync();
+        _dbContext.Set<WorkoutExercise>().RemoveRange(existingExercises);
+        
+        foreach (var exercise in workoutPlan.Exercises)
+        {
+            _dbContext.Entry(exercise).State = EntityState.Added;
+        }
+
         _workoutPlans.Update(workoutPlan);
-        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(WorkoutPlanId id)
     {
-        var workoutPlan = await GetByIdAsync(id);
+        var workoutPlan = await _workoutPlans.Include(wp => wp.Exercises)
+            .SingleOrDefaultAsync(wp => wp.Id == id);
+        foreach (var exercise in workoutPlan.Exercises)
+        {
+            _dbContext.Entry(exercise).State = EntityState.Deleted;
+        }
+
         _workoutPlans.Remove(workoutPlan);
     }
 }

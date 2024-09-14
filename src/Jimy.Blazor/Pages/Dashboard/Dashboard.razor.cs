@@ -64,12 +64,6 @@ public partial class Dashboard : ComponentBase
         await LoadUserData(); // Refresh user data after creating a workout plan
     }
 
-    private async Task SignOut()
-    {
-        await AuthService.SignOutAsync();
-        NavigateToSignIn();
-    }
-
     private void NavigateToSignIn()
     {
         NavigationManager.NavigateTo("/signin");

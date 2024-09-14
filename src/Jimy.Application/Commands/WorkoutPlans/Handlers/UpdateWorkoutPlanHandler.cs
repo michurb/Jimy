@@ -20,7 +20,7 @@ public sealed class UpdateWorkoutPlanHandler(
         }
 
         workoutPlan.UpdateName(new WorkoutPlanName(command.Name));
-        workoutPlan.ClearExercises();
+        var updatedExercises = new List<(ExerciseId, Sets, Reps)>();
         foreach (var exerciseDto in command.Exercises)
         {
             var exercise = await exerciseRepository.GetByIdAsync(new ExerciseId(exerciseDto.ExerciseId));
@@ -29,9 +29,9 @@ public sealed class UpdateWorkoutPlanHandler(
                 throw new ExerciseNotFoundException(exerciseDto.ExerciseId);
             }
 
-            workoutPlan.AddExercise(new WorkoutExerciseId(exerciseDto.WorkoutExerciseId), exercise.Id, new Sets(exerciseDto.Sets), new Reps(exerciseDto.Reps));
+            updatedExercises.Add((exercise.Id, new Sets(exerciseDto.Sets), new Reps(exerciseDto.Reps)));
         }
-
+        workoutPlan.UpdateExercises(updatedExercises);
         await workoutPlanRepository.UpdateAsync(workoutPlan);
     }
 }
