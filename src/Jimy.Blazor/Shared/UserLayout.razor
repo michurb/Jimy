@@ -1,0 +1,44 @@
+﻿@using Jimy.Blazor.API.Interfaces
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+
+<div class="min-h-screen bg-gray-100 flex flex-col">
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">JIMY</span>
+                </div>
+                <nav class="flex space-x-4">
+                    <NavLink href="/dashboard" ActiveClass="text-indigo-600" Match="NavLinkMatch.All" class="text-gray-500 hover:text-indigo-600">Dashboard</NavLink>
+                    <NavLink href="/workout-plans" ActiveClass="text-indigo-600" class="text-gray-500 hover:text-indigo-600">Workout Plans</NavLink>
+                    <NavLink href="/exercises" ActiveClass="text-indigo-600" class="text-gray-500 hover:text-indigo-600">Exercises</NavLink>
+                    <button @onclick="SignOut" class="text-gray-500 hover:text-indigo-600">Sign Out</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            @Body
+        </div>
+    </main>
+
+    <footer class="bg-white">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-500 text-sm">
+                © 2024 JIMY. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</div>
+
+@code {
+    private async Task SignOut()
+    {
+        await AuthService.SignOutAsync();
+        NavigationManager.NavigateTo("/signin");
+    }
+}

@@ -29,7 +29,7 @@ public sealed class CreateWorkoutPlanHandler(
                 throw new ExerciseNotFoundException(exerciseId.Value);
             }
 
-            workoutPlan.AddExercise(exercise.Id, new Sets(exerciseDto.Sets), new Reps(exerciseDto.Reps));
+            workoutPlan.AddExercise(WorkoutExerciseId.NewId(), exercise.Id, new Sets(exerciseDto.Sets), new Reps(exerciseDto.Reps));
         }
 
         await workoutPlanRepository.AddAsync(workoutPlan);

@@ -1,4 +1,15 @@
-@Jimy.Api_HostAddress = http://localhost:5147
+@Jimy.Api_HostAddress = http://localhost:6287
+###
+POST {{Jimy.Api_HostAddress}}/users
+Content-Type: application/json
+{
+    "email": "bobek@jimy.com",
+    "password": "sicret,
+    "username" : "bobek",
+     "role" : "user"
+}
+
+
 ###
 POST {{Jimy.Api_HostAddress}}/users/sign-in
 Content-Type: application/json
@@ -6,9 +17,10 @@ Content-Type: application/json
     "email": "bobek@jimy.com",
     "password": "sicret"
 }
-###
-@Jimy.Api_AccessToken = {{response.body.access_token}}
+
 
 ###
 GET {{Jimy.Api_HostAddress}}/users/me
 Autrhoization: Bearere {{Jimy.Api_AccessToken}}
+###
+@Jimy.Api_AccessToken = {{response.body.access_token}}

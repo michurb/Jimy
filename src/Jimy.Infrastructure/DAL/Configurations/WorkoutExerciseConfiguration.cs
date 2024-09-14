@@ -9,10 +9,10 @@ internal sealed class WorkoutExerciseConfiguration : IEntityTypeConfiguration<Wo
 {
     public void Configure(EntityTypeBuilder<WorkoutExercise> builder)
     {
-        builder.HasKey(we => new { we.ExerciseId });
+        builder.HasKey(we => we.Id);
 
-        builder.Property(we => we.ExerciseId)
-            .HasConversion(id => id.Value, value => new ExerciseId(value));
+        builder.Property(we => we.Id)
+            .HasConversion(id => id.Value, value => new WorkoutExerciseId(value));
 
         builder.Property(we => we.Sets)
             .HasConversion(sets => sets.Value, value => new Sets(value));

@@ -21,9 +21,9 @@ public class WorkoutPlan
         CreatedDate = createdDate;
     }
 
-    public void AddExercise(ExerciseId exerciseId, Sets sets, Reps reps)
+    public void AddExercise(WorkoutExerciseId id ,ExerciseId exerciseId, Sets sets, Reps reps)
     {
-        _exercises.Add(new WorkoutExercise(exerciseId, sets, reps));
+        _exercises.Add(new WorkoutExercise(id, exerciseId, sets, reps));
     }
 
     public void RemoveExercise(ExerciseId exerciseId)
