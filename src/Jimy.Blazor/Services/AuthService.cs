@@ -13,11 +13,13 @@ public class AuthService : IAuthService
 {
     private readonly IHttpClientFactory _httpClient;
     private readonly IJSRuntime _jsRuntime;
+    private readonly IServiceProvider _serviceProvider;
 
-    public AuthService(IHttpClientFactory httpClient, IJSRuntime jsRuntime)
+    public AuthService(IHttpClientFactory httpClient, IJSRuntime jsRuntime, IServiceProvider serviceProvider)
     {
         _httpClient = httpClient;
         _jsRuntime = jsRuntime;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task<AuthResponseDto> SignInAsync(SignInDto signInDto)
@@ -35,6 +37,10 @@ public class AuthService : IAuthService
             var authResponse = JsonSerializer.Deserialize<AuthResponseDto>(content, options);
             
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", authResponse.AccessToken);
+
+            var user = await GetCurrentUserAsync();
+            var authStateProvider = _serviceProvider.GetService<AuthenticationStateProvider>() as ApiAuthenticationStateProvider;
+            await authStateProvider.MarkUserAsAuthenticated(user);
         
             return authResponse;
         }

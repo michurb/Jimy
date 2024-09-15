@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
-using Jimy.Blazor.API.Interfaces;
+using System.Text.Json;
+using Jimy.Blazor.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 
@@ -7,13 +8,13 @@ namespace Jimy.Blazor.Auth;
 
 public class ApiAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private readonly IAuthService _authService;
     private readonly IJSRuntime _jsRuntime;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public ApiAuthenticationStateProvider(IJSRuntime jsRuntime, IAuthService authService)
+    public ApiAuthenticationStateProvider(IJSRuntime jsRuntime, IHttpClientFactory httpClientFactory)
     {
         _jsRuntime = jsRuntime;
-        _authService = authService;
+        _httpClientFactory = httpClientFactory;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -27,14 +28,8 @@ public class ApiAuthenticationStateProvider : AuthenticationStateProvider
 
         try
         {
-            var user = await _authService.GetCurrentUserAsync();
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-            var identity = new ClaimsIdentity(claims, "jwt");
+            var user = await GetUserFromApi(token);
+            var identity = CreateClaimsIdentity(user);
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
         catch
@@ -43,17 +38,37 @@ public class ApiAuthenticationStateProvider : AuthenticationStateProvider
         }
     }
 
-    public void MarkUserAsAuthenticated(string token)
+    public async Task MarkUserAsAuthenticated(UserDto user)
     {
-        var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, token) }, "jwt"));
-        var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
-        NotifyAuthenticationStateChanged(authState);
+        var identity = CreateClaimsIdentity(user);
+        var claimsPrincipal = new ClaimsPrincipal(identity);
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
     }
 
     public void MarkUserAsLoggedOut()
     {
         var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
-        var authState = Task.FromResult(new AuthenticationState(anonymousUser));
-        NotifyAuthenticationStateChanged(authState);
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));
+    }
+
+    private ClaimsIdentity CreateClaimsIdentity(UserDto user)
+    {
+        var claimsIdentity = new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.Name, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+        }, "apiauth_type");
+
+        return claimsIdentity;
+    }
+
+    private async Task<UserDto> GetUserFromApi(string token)
+    {
+        var client = _httpClientFactory.CreateClient("MainApi");
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        var response = await client.GetAsync("api/users/me");
+        response.EnsureSuccessStatusCode();
+        var content = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<UserDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 }
