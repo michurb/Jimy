@@ -13,13 +13,13 @@ public class AuthService : IAuthService
 {
     private readonly IHttpClientFactory _httpClient;
     private readonly IJSRuntime _jsRuntime;
-    private readonly AuthenticationStateProvider _authStateProvider;
 
     public AuthService(IHttpClientFactory httpClient, IJSRuntime jsRuntime)
     {
         _httpClient = httpClient;
         _jsRuntime = jsRuntime;
     }
+
     public async Task<AuthResponseDto> SignInAsync(SignInDto signInDto)
     {
         var client = _httpClient.CreateClient("MainApi");
@@ -32,10 +32,13 @@ public class AuthService : IAuthService
             {
                 PropertyNameCaseInsensitive = true
             };
-            return JsonSerializer.Deserialize<AuthResponseDto>(content, options);
+            var authResponse = JsonSerializer.Deserialize<AuthResponseDto>(content, options);
+            
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", authResponse.AccessToken);
+        
+            return authResponse;
         }
         
-        // If the response is not successful, throw an exception with the error message
         var errorContent = await response.Content.ReadAsStringAsync();
         throw new Exception($"Authentication failed: {errorContent}");
     }
@@ -85,6 +88,5 @@ public class AuthService : IAuthService
     public async Task SignOutAsync()
     {
         await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
-        ((ApiAuthenticationStateProvider)_authStateProvider).MarkUserAsLoggedOut();
     }
 }

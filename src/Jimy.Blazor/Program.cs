@@ -25,7 +25,9 @@ builder.Services.AddHttpClient("SecondaryApi", client =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IWorkoutPlanService, WorkoutPlanService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
+builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+
 
 
 await builder.Build().RunAsync();

@@ -15,6 +15,7 @@ public class ApiAuthenticationStateProvider : AuthenticationStateProvider
         _jsRuntime = jsRuntime;
         _authService = authService;
     }
+
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
@@ -41,6 +42,7 @@ public class ApiAuthenticationStateProvider : AuthenticationStateProvider
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
     }
+
     public void MarkUserAsAuthenticated(string token)
     {
         var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, token) }, "jwt"));

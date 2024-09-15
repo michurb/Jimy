@@ -1,5 +1,21 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
 
-<div class="page">
-    @Body
-</div>
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <AuthenticatedLayout>
+                @Body
+            </AuthenticatedLayout>
+        </Authorized>
+        <NotAuthorized>
+            <div class="min-h-screen bg-gray-100 flex flex-col">
+                <main class="flex-grow">
+                    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                        @Body
+                    </div>
+                </main>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>

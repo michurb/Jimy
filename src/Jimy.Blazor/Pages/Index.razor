@@ -1,9 +1,18 @@
 ﻿@page "/"
 @inject NavigationManager NavigationManager
+@inject ILogger<Index> Logger
 
 @code {
     protected override void OnInitialized()
     {
-        NavigationManager.NavigateTo("/signin");
+        try
+        {
+            Logger.LogInformation("Redirecting to /signin");
+            NavigationManager.NavigateTo("/signin");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error during redirection to /signin");
+        }
     }
 }

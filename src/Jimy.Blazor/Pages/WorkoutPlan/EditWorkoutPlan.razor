@@ -1,5 +1,7 @@
 ﻿@using Jimy.Blazor.API.Interfaces
 @using Jimy.Blazor.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject IWorkoutPlanService WorkoutPlanService
 @inject IExerciseService ExerciseService
 @inject IAuthService AuthService

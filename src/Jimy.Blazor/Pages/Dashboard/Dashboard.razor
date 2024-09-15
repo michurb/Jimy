@@ -1,9 +1,10 @@
 ﻿@page "/dashboard"
 @layout UserLayout
+@attribute [Authorize]
 @using Jimy.Blazor.API.Interfaces
-@using Jimy.Blazor.Models
 @using Jimy.Blazor.Pages.WorkoutPlan
 @using Jimy.Blazor.Shared
+@using Microsoft.AspNetCore.Authorization
 @inject IWorkoutPlanService WorkoutPlanService
 
     <main>
