@@ -18,13 +18,13 @@
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                     <InputText id="email" @bind-Value="signInModel.Email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
-                    <ValidationMessage For="@(() => signInModel.Email)" />
+                    <ValidationMessage For="@(() => signInModel.Email)" class="text-red-500 text-sm" />
                 </div>
 
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                     <InputText type="password" id="password" @bind-Value="signInModel.Password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
-                    <ValidationMessage For="@(() => signInModel.Password)" />
+                    <ValidationMessage For="@(() => signInModel.Password)" class="text-red-500 text-sm" />
                 </div>
 
                 <div>

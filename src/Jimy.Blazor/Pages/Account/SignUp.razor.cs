@@ -18,8 +18,7 @@ public partial class SignUp : ComponentBase
         }
         catch (Exception ex)
         {
-            // Handle error (e.g., show error message)
-            Console.WriteLine($"Error: {ex.Message}");
+            errorMessage = "An error occured during sing up. Please try again.";
         }
     }
 }

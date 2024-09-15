@@ -34,12 +34,12 @@ public partial class SignIn : ComponentBase
             }
             else
             {
-                errorMessage = "Invalid response from server";
+                errorMessage = "Invalid email or password";
             }
         }
         catch (Exception ex)
         {
-            errorMessage = ex.Message;
+            errorMessage = "Invalid email or password";
         }
     }
 }

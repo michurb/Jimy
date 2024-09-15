@@ -20,19 +20,19 @@
                 <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
                     <InputText id="username" @bind-Value="signUpModel.Username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
-                    <ValidationMessage For="@(() => signUpModel.Username)" />
+                    <ValidationMessage For="@(() => signUpModel.Username)" class="text-red-500 text-sm" />
                 </div>
 
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                     <InputText id="email" @bind-Value="signUpModel.Email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
-                    <ValidationMessage For="@(() => signUpModel.Email)" />
+                    <ValidationMessage For="@(() => signUpModel.Email)" class="text-red-500 text-sm" />
                 </div>
 
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                     <InputText type="password" id="password" @bind-Value="signUpModel.Password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
-                    <ValidationMessage For="@(() => signUpModel.Password)" />
+                    <ValidationMessage For="@(() => signUpModel.Password)" class="text-red-500 text-sm" />
                 </div>
 
                 <div>
@@ -41,6 +41,11 @@
                     </button>
                 </div>
             </EditForm>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+            <div class="mt-4 text-red-600">@errorMessage</div>
+            }
 
             <div class="mt-6">
                 <div class="relative">
