@@ -12,7 +12,7 @@ internal sealed class SqlServerWorkoutSessionRepository : IWorkoutSessionReposit
 
     public SqlServerWorkoutSessionRepository(JimyDbContext dbContext)
     {
-        _workoutSessions = _dbContext.WorkoutSessions;
+        _workoutSessions = dbContext.WorkoutSessions;
         _dbContext = dbContext;
     }
 

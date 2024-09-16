@@ -10,6 +10,7 @@ internal sealed class JimyDbContext : DbContext
     public DbSet<Exercise> Exercises { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
     public DbSet<WorkoutSession> WorkoutSessions { get; set; }
+    public DbSet<WorkoutSessionExercise> WorkoutSessionExercises { get; set; }
 
     public JimyDbContext(DbContextOptions<JimyDbContext> options) : base(options)
     {

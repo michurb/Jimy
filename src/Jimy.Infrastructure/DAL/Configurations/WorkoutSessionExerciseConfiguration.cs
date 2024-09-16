@@ -29,5 +29,12 @@ internal sealed class WorkoutSessionExerciseConfiguration : IEntityTypeConfigura
         builder.HasOne(wse => wse.Exercise)
             .WithMany()
             .HasForeignKey(wse => wse.ExerciseId);
+        builder.HasOne(wse => wse.Exercise)
+            .WithMany()
+            .HasForeignKey(wse => wse.ExerciseId);
+
+        builder.HasOne<WorkoutSession>()
+            .WithMany(ws => ws.Exercises)
+            .HasForeignKey(wse => wse.WorkoutSessionId);
     }
 }

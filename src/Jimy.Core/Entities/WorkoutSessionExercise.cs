@@ -10,6 +10,8 @@ public class WorkoutSessionExercise
     public Sets Sets { get; private set; }
     public Reps Reps { get; private set; }
     public Weight Weight { get; private set; }
+    
+    private WorkoutSessionExercise() { }
 
     public WorkoutSessionExercise(ExerciseId exerciseId, Sets sets, Reps reps, Weight weight)
     {
