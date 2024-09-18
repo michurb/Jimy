@@ -1,0 +1,52 @@
+﻿@page "/start-workout/{WorkoutPlanId:guid}"
+@using Jimy.Blazor.API.Interfaces
+@inject IWorkoutSessionService WorkoutSessionService
+@inject NavigationManager NavigationManager
+
+<h3>Start Workout Session</h3>
+
+@if (isLoading)
+{
+    <p>Starting workout session...</p>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+else
+{
+    <button @onclick="StartWorkout" class="btn btn-primary">Start Workout</button>
+}
+
+@code {
+    [Parameter] public Guid WorkoutPlanId { get; set; }
+    private bool isLoading;
+    private string errorMessage;
+
+    private async Task StartWorkout()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+            var sessionId = await WorkoutSessionService.StartWorkoutSession(WorkoutPlanId);
+            NavigationManager.NavigateTo($"/active-workout/{sessionId}");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            errorMessage = "You are not authorized to start a workout session. Please sign in.";
+            NavigationManager.NavigateTo("/signin");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

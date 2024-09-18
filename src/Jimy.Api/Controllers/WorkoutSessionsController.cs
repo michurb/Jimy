@@ -2,7 +2,11 @@
 using Jimy.Application.Commands.WorkoutSessions;
 using Jimy.Application.DTO;
 using Jimy.Application.Queries.WorkoutPlans;
+using Jimy.Core.ValueObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WorkoutSessionDto = Jimy.Application.DTO.WorkoutSessionDto;
+using WorkoutSessionExerciseDto = Jimy.Application.DTO.WorkoutSessionExerciseDto;
 
 namespace Jimy.Api.Controllers;
 
@@ -10,14 +14,16 @@ namespace Jimy.Api.Controllers;
 [Route("api/workout-sessions")]
 public class WorkoutSessionsController : ControllerBase
 {
-     private readonly ICommandHandler<StartWorkoutSession> _startWorkoutSessionHandler;
+    private readonly ICommandHandler<StartWorkoutSession> _startWorkoutSessionHandler;
     private readonly ICommandHandler<EndWorkoutSession> _endWorkoutSessionHandler;
     private readonly IQueryHandler<GetWorkoutSession, WorkoutSessionDto> _getWorkoutSessionHandler;
     private readonly IQueryHandler<GetUsersWorkoutSession, IEnumerable<WorkoutSessionDto>> _getUsersWorkoutSessionHandler;
+    private readonly ICommandHandler<UpdateWorkoutSessionExerciseWeight> _updateWorkoutSessionExerciseWeightHandler;
 
     public WorkoutSessionsController(
         ICommandHandler<StartWorkoutSession> startWorkoutSessionHandler,
         ICommandHandler<EndWorkoutSession> endWorkoutSessionHandler,
+        ICommandHandler<UpdateWorkoutSessionExerciseWeight> updateWorkoutSessionExerciseWeightHandler,
         IQueryHandler<GetWorkoutSession, WorkoutSessionDto> getWorkoutSessionHandler,
         IQueryHandler<GetUsersWorkoutSession, IEnumerable<WorkoutSessionDto>> getUsersWorkoutSessionHandler)
     {
@@ -25,6 +31,7 @@ public class WorkoutSessionsController : ControllerBase
         _endWorkoutSessionHandler = endWorkoutSessionHandler;
         _getWorkoutSessionHandler = getWorkoutSessionHandler;
         _getUsersWorkoutSessionHandler = getUsersWorkoutSessionHandler;
+        _updateWorkoutSessionExerciseWeightHandler = updateWorkoutSessionExerciseWeightHandler;
     }
 
     [HttpGet("{id:guid}")]
@@ -46,10 +53,24 @@ public class WorkoutSessionsController : ControllerBase
     }
 
     [HttpPost("start")]
-    public async Task<ActionResult> StartSession(StartWorkoutSession command)
+    public async Task<ActionResult<WorkoutSessionDto>> StartSession([FromBody]StartWorkoutSessionDto request)
     {
+        if (request.WorkoutPlanId == Guid.Empty)
+        {
+            return BadRequest("Invalid workout plan ID");
+        }
+
+        var userId = Guid.Parse(User.Identity.Name); // Get the user ID from the authenticated user
+
+        var command = new StartWorkoutSession(
+            Guid.NewGuid(),
+            userId,
+            request.WorkoutPlanId,
+            new List<WorkoutSessionExerciseDto>() // We'll populate this later
+        );
+
         await _startWorkoutSessionHandler.HandleAsync(command);
-        return NoContent();
+        return Ok(command.Id);
     }
 
     [HttpPost("{id:guid}/end")]
@@ -62,4 +83,30 @@ public class WorkoutSessionsController : ControllerBase
         await _endWorkoutSessionHandler.HandleAsync(command);
         return NoContent();
     }
+    
+    [Authorize]
+    [HttpPost("start-from-plan")]
+    public async Task<ActionResult<Guid>> StartWorkoutFromPlan([FromBody] StartWorkoutSessionDto dto)
+    {
+        var userId = Guid.Parse(User.Identity.Name);
+        
+        var command = new StartWorkoutSession(
+            Guid.NewGuid(),
+            userId,
+            dto.WorkoutPlanId,
+            dto.Exercises
+        );
+
+        await _startWorkoutSessionHandler.HandleAsync(command);
+        return Ok(command.Id);
+    }
+    
+    [HttpPost("{sessionId:guid}/exercises/{exerciseId:guid}/set/{setNumber:int}/weight")]
+    public async Task<ActionResult> UpdateWeight(Guid sessionId, Guid exerciseId, int setNumber, [FromBody] UpdateWorkoutSessionExerciseDto dto)
+    {
+        var command = new UpdateWorkoutSessionExerciseWeight(sessionId, exerciseId, setNumber, dto.Weight);
+        await _updateWorkoutSessionExerciseWeightHandler.HandleAsync(command);
+        return NoContent();
+    }
+
 }

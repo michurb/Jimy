@@ -27,4 +27,9 @@ public class WorkoutSessionExercise
         Reps = reps;
         Weight = weight;
     }
+    
+    public void UpdateWeight(Weight weight)
+    {
+        Weight = weight;
+    }
 }

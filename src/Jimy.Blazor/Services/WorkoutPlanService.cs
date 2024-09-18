@@ -93,4 +93,25 @@ public class WorkoutPlanService : IWorkoutPlanService
             throw new Exception($"Failed to delete workout plan: {errorContent}");
         }
     }
+
+    public async Task<WorkoutPlanDto> GetWorkoutPlanAsync(Guid workoutPlanId)
+    {
+        var client = _httpClient.CreateClient("MainApi");
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        }
+        
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        var response = await client.GetAsync($"api/workout-plans/{workoutPlanId}");
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<WorkoutPlanDto>();
+        }
+
+        throw new Exception("cannot get workoutplan");
+    }
 }

@@ -8,4 +8,5 @@ public interface IWorkoutPlanService
     Task<List<WorkoutPlanDto>> GetUserWorkoutPlansAsync();
     Task UpdateWorkoutPlanAsync(WorkoutPlanDto workoutPlan);
     Task DeleteWorkoutPlanAsync(Guid workoutPlanId);
+    Task<WorkoutPlanDto> GetWorkoutPlanAsync(Guid workoutPlanId);
 }

@@ -1,0 +1,56 @@
+﻿@using System.Timers
+
+<div>
+    <button @onclick="ToggleTimer" class="btn btn-primary">
+        @(IsRunning ? "Stop" : "Start") Timer
+    </button>
+    <span class="ml-2">@DisplayTime</span>
+</div>
+
+@code {
+    [Parameter] public EventCallback<bool> OnTimerToggle { get; set; }
+    
+    private System.Timers.Timer _timer;
+    private TimeSpan _time = TimeSpan.Zero;
+    public bool IsRunning { get; private set; }
+    public string DisplayTime => _time.ToString(@"hh\:mm\:ss");
+
+    protected override void OnInitialized()
+    {
+        _timer = new System.Timers.Timer(1000);
+        _timer.Elapsed += TimerTick;
+    }
+
+    private void TimerTick(object sender, ElapsedEventArgs e)
+    {
+        _time = _time.Add(TimeSpan.FromSeconds(1));
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ToggleTimer()
+    {
+        if (IsRunning)
+        {
+            _timer.Stop();
+        }
+        else
+        {
+            _timer.Start();
+        }
+        IsRunning = !IsRunning;
+        await OnTimerToggle.InvokeAsync(IsRunning);
+    }
+
+    public void Reset()
+    {
+        _time = TimeSpan.Zero;
+        IsRunning = false;
+        _timer.Stop();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

@@ -14,12 +14,14 @@ public class WorkoutSession
 
     private WorkoutSession() { }
 
-    public WorkoutSession(WorkoutSessionId id, UserId userId, WorkoutPlanId workoutPlanId, DateTime startTime)
+    public WorkoutSession(WorkoutSessionId id, UserId userId, WorkoutPlanId workoutPlanId, DateTime startTime,
+        IEnumerable<WorkoutSessionExercise> exercises)
     {
         Id = id;
         UserId = userId;
         WorkoutPlanId = workoutPlanId;
         StartTime = startTime;
+        _exercises.AddRange(exercises);
     }
 
     public void AddExercise(ExerciseId exerciseId, Sets sets, Reps reps, Weight weight)
@@ -34,6 +36,17 @@ public class WorkoutSession
         {
             exercise.Update(sets, reps, weight);
         }
+    }
+    
+    public void UpdateExerciseWeight(ExerciseId exerciseId, Sets setNumber, Weight weight)
+    {
+        var exercise = _exercises.FirstOrDefault(e => e.ExerciseId == exerciseId);
+        if (exercise == null)
+        {
+            throw new InvalidOperationException("Exercise not found.");
+        }
+
+        exercise.UpdateWeight(weight);
     }
 
     public void End(DateTime endTime)

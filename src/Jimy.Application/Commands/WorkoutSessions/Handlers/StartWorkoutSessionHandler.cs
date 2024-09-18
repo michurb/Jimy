@@ -6,45 +6,39 @@ using Jimy.Core.ValueObjects;
 
 namespace Jimy.Application.Commands.WorkoutSessions.Handlers;
 
-public sealed class StartWorkoutSessionHandler(IWorkoutSessionRepository workoutSessionRepository,
-    IWorkoutPlanRepository workoutPlanRepository,
-    IExerciseRepository exerciseRepository) : ICommandHandler<StartWorkoutSession>
+public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSession>
 {
+    private readonly IWorkoutSessionRepository _sessionRepository;
+    private readonly IWorkoutPlanRepository _planRepository;
+    
+    public StartWorkoutSessionHandler(
+        IWorkoutSessionRepository sessionRepository,
+        IWorkoutPlanRepository planRepository)
+    {
+        _sessionRepository = sessionRepository;
+        _planRepository = planRepository;
+    }
+
     public async Task HandleAsync(StartWorkoutSession command)
     {
-        var userId = new UserId(command.UserId);
         var workoutPlanId = new WorkoutPlanId(command.WorkoutPlanId);
-
-        var workoutPlan = await workoutPlanRepository.GetByIdAsync(workoutPlanId);
+        var workoutPlan = await _planRepository.GetByIdAsync(workoutPlanId);
         if (workoutPlan == null)
         {
             throw new WorkoutPlanNotFoundException(command.WorkoutPlanId);
         }
 
+        // Create the workout session with exercises based on the plan
         var workoutSession = new WorkoutSession(
-            WorkoutSessionId.NewId(),
-            userId,
-            workoutPlanId,
-            DateTime.UtcNow
+            new WorkoutSessionId(command.Id),
+            command.UserId,
+            new WorkoutPlanId(command.WorkoutPlanId),
+            DateTime.UtcNow,
+            command.Exercises.Select(e => 
+                new WorkoutSessionExercise(new ExerciseId(e.ExerciseId), new Sets(e.Sets), new Reps(e.Reps), new Weight(e.Weight))
+            ).ToList()
         );
 
-        foreach (var exerciseDto in command.Exercises)
-        {
-            var exerciseId = new ExerciseId(exerciseDto.ExerciseId);
-            var exercise = await exerciseRepository.GetByIdAsync(exerciseId);
-            if (exercise == null)
-            {
-                throw new ExerciseNotFoundException(exerciseDto.ExerciseId);
-            }
-
-            workoutSession.AddExercise(
-                exercise.Id,
-                new Sets(exerciseDto.Sets),
-                new Reps(exerciseDto.Reps),
-                new Weight(exerciseDto.Weight)
-            );
-        }
-
-        await workoutSessionRepository.AddAsync(workoutSession);
+        await _sessionRepository.AddAsync(workoutSession);
     }
 }

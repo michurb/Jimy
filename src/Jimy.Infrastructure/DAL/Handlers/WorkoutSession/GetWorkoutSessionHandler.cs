@@ -19,6 +19,8 @@ internal sealed class GetWorkoutSessionHandler : IQueryHandler<GetWorkoutSession
     {
         var workoutSessionId = new WorkoutSessionId(query.WorkoutSessionId);
         var workoutSession = await _dbContext.WorkoutSessions
+            .Include(ws => ws.Exercises)
+            .ThenInclude(ex => ex.Exercise)
             .AsNoTracking()
             .SingleOrDefaultAsync(ws => ws.Id == workoutSessionId);
         return workoutSession?.AsDto();

@@ -17,6 +17,7 @@ builder.Services.AddHttpClient("MainApi", client =>
     client.BaseAddress = new Uri("http://localhost:5080/");
 });
 
+
 builder.Services.AddHttpClient("SecondaryApi", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7008/");
@@ -25,8 +26,10 @@ builder.Services.AddHttpClient("SecondaryApi", client =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IWorkoutPlanService, WorkoutPlanService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
+builder.Services.AddScoped<IWorkoutSessionService, WorkoutSessionService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+builder.Services.AddScoped<ApiAuthenticationStateProvider>();
 
 
 
