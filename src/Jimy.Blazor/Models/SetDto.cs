@@ -2,6 +2,6 @@
 
 public class SetDto
 {
-    public int Number { get; set; }
+    public int SetNumber { get; set; }
     public decimal Weight { get; set; }
 }

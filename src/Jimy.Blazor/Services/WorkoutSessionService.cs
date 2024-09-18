@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Models;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -35,7 +36,7 @@ public class WorkoutSessionService : IWorkoutSessionService
             SetNumber = setNumber,
             Weight = weight
         };
-        var response = await _httpClient.PostAsJsonAsync($"api/workout-sessions/{sessionId}/exercises/{exerciseId}/weight", updateDto);
+        var response = await _httpClient.PostAsJsonAsync($"api/workout-sessions/{sessionId}/exercises/{exerciseId}/set/{setNumber}/weight", updateDto);
         response.EnsureSuccessStatusCode();
     }
 
@@ -68,21 +69,17 @@ public class WorkoutSessionService : IWorkoutSessionService
     
     public async Task EndWorkoutSessionAsync(Guid sessionId)
     {
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        }
+
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         var response = await _httpClient.PostAsync($"api/workout-sessions/{sessionId}/end", null);
         response.EnsureSuccessStatusCode();
     }
-    
-    private async Task<string> GetTokenAsync()
-    {
-        var authState = await _authProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
-        {
-            var token = user.FindFirst(c => c.Type == "access_token")?.Value;
-            return token;
-        }
-
-        return null;
-    }
 }

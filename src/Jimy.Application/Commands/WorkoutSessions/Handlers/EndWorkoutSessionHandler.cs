@@ -23,17 +23,6 @@ public sealed class EndWorkoutSessionHandler(IWorkoutSessionRepository workoutSe
 
         workoutSession.End(DateTime.UtcNow);
 
-        foreach (var exerciseDto in command.Exercises)
-        {
-            var exerciseId = new ExerciseId(exerciseDto.ExerciseId);
-            workoutSession.UpdateExercise(
-                exerciseId,
-                new Sets(exerciseDto.Sets),
-                new Reps(exerciseDto.Reps),
-                new Weight(exerciseDto.Weight)
-            );
-        }
-
         await workoutSessionRepository.UpdateAsync(workoutSession);
     }
 }

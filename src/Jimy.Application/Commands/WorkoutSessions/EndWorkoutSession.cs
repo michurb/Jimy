@@ -3,4 +3,4 @@ using Jimy.Application.DTO;
 
 namespace Jimy.Application.Commands.WorkoutSessions;
 
-public record EndWorkoutSession(Guid Id, IEnumerable<WorkoutSessionExerciseDto> Exercises) : ICommand;
+public record EndWorkoutSession(Guid Id) : ICommand;

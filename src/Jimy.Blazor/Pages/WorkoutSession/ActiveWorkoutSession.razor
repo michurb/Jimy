@@ -64,13 +64,23 @@ else if (WorkoutSession != null)
 
     private async Task EndWorkout()
     {
-
-        NavigationManager.NavigateTo("/dashboard");
+        try
+        {
+            // End the workout session
+            await WorkoutSessionService.EndWorkoutSessionAsync(SessionId);
+            
+            // Navigate back to the dashboard
+            NavigationManager.NavigateTo("/dashboard");
+        }
+        catch (Exception ex)
+        {
+            // Handle any errors (e.g., show an error message to the user)
+            Console.WriteLine($"Error ending workout: {ex.Message}");
+        }
     }
 
     public void Dispose()
     {
         _timer?.Dispose();
     }
-
 }

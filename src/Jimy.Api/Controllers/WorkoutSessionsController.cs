@@ -74,12 +74,9 @@ public class WorkoutSessionsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/end")]
-    public async Task<ActionResult> EndSession(Guid id, EndWorkoutSession command)
+    public async Task<ActionResult> EndSession(Guid id)
     {
-        if (id != command.Id)
-        {
-            return BadRequest();
-        }
+        var command = new EndWorkoutSession(id);
         await _endWorkoutSessionHandler.HandleAsync(command);
         return NoContent();
     }
@@ -97,7 +94,7 @@ public class WorkoutSessionsController : ControllerBase
             Guid.NewGuid(),
             userId,
             dto.WorkoutPlanId,
-            new List<WorkoutSessionExerciseDto>() // We'll populate this in the handler
+            new List<WorkoutSessionExerciseDto>()
         );
             await _startWorkoutSessionHandler.HandleAsync(command);
             return Ok(command.Id);
