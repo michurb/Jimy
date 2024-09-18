@@ -1,41 +1,56 @@
 ﻿@page "/active-workout/{sessionId:guid}"
 @inject IWorkoutSessionService WorkoutSessionService
+@inject IWorkoutPlanService WorkoutPlanService
 @inject NavigationManager NavigationManager
 @using Jimy.Blazor.API.Interfaces
 @implements IDisposable
 
-<h3 class="text-2xl font-semibold mb-4">Active Workout Session</h3>
-
-@if (IsLoading)
-{
-    <p class="text-gray-600">Loading workout session details...</p>
-}
-else if (WorkoutSession != null)
-{
-    <Timer></Timer>
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <p class="text-xl font-semibold mb-4">Time Elapsed: @ElapsedTime.ToString(@"hh\:mm\:ss")</p>
-
-        @foreach (var exercise in WorkoutSession.Exercises)
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-3xl w-full">
+        @if (IsLoading)
         {
+        <p class="text-gray-600 text-center">Loading workout session details...</p>
+        }
+        else if (WorkoutSession != null)
+        {
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h3 class="text-2xl font-semibold text-center mb-4">@WorkoutPlanName.Name</h3>
+
+            <div class="mb-6 flex flex-col items-center">
+                <Timer/>
+                <p class="text-xl font-semibold mt-2 text-center">Time Elapsed: @ElapsedTime.ToString(@"hh\:mm\:ss")</p>
+            </div>
+
+            @foreach (var exercise in WorkoutSession.Exercises)
+            {
             <div class="mb-6 border-b pb-4">
-                <h4 class="text-lg font-semibold mb-2">@exercise.Name</h4>
+                <h4 class="text-lg font-semibold mb-2 text-center">@exercise.Name</h4>
                 @foreach (var set in exercise.SetDetails)
                 {
-                    <div class="flex items-center mb-2">
-                        <span class="w-20">Set @set.SetNumber:</span>
-                        <input type="number" value="@set.Weight" @onchange="e => UpdateWeight(exercise.Id, set.SetNumber, decimal.Parse(e.Value.ToString()))" class="w-20 px-2 py-1 border rounded-md mr-2"/> kg
-                        <span class="ml-2">@exercise.Reps reps</span>
+                <div class="flex flex-wrap justify-center items-center mb-2">
+                    <span class="w-20 mr-2 text-center">Set @set.SetNumber:</span>
+                    <span class="w-20 mr-2 text-center">@exercise.Reps reps</span>
+                    <div class="flex items-center">
+                        <input type="number"
+                               value="@set.Weight"
+                               @onchange="e => UpdateWeight(exercise.Id, set.SetNumber, decimal.Parse(e.Value.ToString()))"
+                               class="w-20 px-2 py-1 border rounded-md mr-2 text-center"/>
+                        <span>kg</span>
                     </div>
+                </div>
                 }
             </div>
-        }
+            }
 
-        <button @onclick="EndWorkout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-            End Workout
-        </button>
+            <div class="text-center mt-6">
+                <button @onclick="EndWorkout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                    End Workout
+                </button>
+            </div>
+        </div>
+        }
     </div>
-}
+</div>
 
 @code {
     [Parameter] public Guid SessionId { get; set; }
@@ -43,6 +58,7 @@ else if (WorkoutSession != null)
     private bool IsLoading { get; set; } = true;
     private TimeSpan ElapsedTime => DateTime.UtcNow - WorkoutSession?.StartTime ?? TimeSpan.Zero;
     private System.Threading.Timer _timer;
+    private WorkoutPlanDto WorkoutPlanName { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,6 +69,7 @@ else if (WorkoutSession != null)
     private async Task LoadWorkoutSession()
     {
         WorkoutSession = await WorkoutSessionService.GetSessionAsync(SessionId);
+        WorkoutPlanName = await WorkoutPlanService.GetWorkoutPlanAsync(WorkoutSession.WorkoutPlanId);
         IsLoading = false;
     }
 
