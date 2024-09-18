@@ -19,6 +19,7 @@ internal sealed class SqlServerWorkoutSessionRepository : IWorkoutSessionReposit
     public async Task<WorkoutSession> GetByIdAsync(WorkoutSessionId id)
         => await _workoutSessions
             .Include(x => x.Exercises)
+            .ThenInclude(x => x.Exercise)
             .SingleOrDefaultAsync(x => x.Id == id);
     public async Task<IEnumerable<WorkoutSession>> GetByUserIdAsync(UserId userId)
         => await _workoutSessions

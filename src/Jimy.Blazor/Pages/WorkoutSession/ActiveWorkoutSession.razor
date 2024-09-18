@@ -1,6 +1,7 @@
 ﻿@page "/active-workout/{sessionId:guid}"
-@using Jimy.Blazor.API.Interfaces
 @inject IWorkoutSessionService WorkoutSessionService
+@inject NavigationManager NavigationManager
+@using Jimy.Blazor.API.Interfaces
 @implements IDisposable
 
 <h3 class="text-2xl font-semibold mb-4">Active Workout Session</h3>
@@ -18,11 +19,13 @@ else if (WorkoutSession != null)
         {
             <div class="mb-6 border-b pb-4">
                 <h4 class="text-lg font-semibold mb-2">@exercise.Name</h4>
-                @foreach (var set in exercise.Sets)
+                @for (var i = 1; i <= exercise.Sets; i++)
                 {
+                    var setNumber = i;
                     <div class="flex items-center mb-2">
-                        <span class="w-20">Set @set.Number:</span>
-                        <input type="number" @bind="set.Weight" @bind:event="oninput" @onchange="() => UpdateWeight(exercise.Id, set.Number, set.Weight)" class="w-20 px-2 py-1 border rounded-md mr-2" /> kg
+                        <span class="w-20">Set @setNumber:</span>
+                        <input type="number" value="@exercise.Weight" @onchange="e => UpdateWeight(exercise.Id, setNumber, decimal.Parse(e.Value.ToString()))" class="w-20 px-2 py-1 border rounded-md mr-2"/> kg
+                        <span class="ml-2">@exercise.Reps reps</span>
                     </div>
                 }
             </div>
@@ -35,20 +38,16 @@ else if (WorkoutSession != null)
 }
 
 @code {
+    [Parameter] public Guid SessionId { get; set; }
     private WorkoutSessionDto WorkoutSession { get; set; }
     private bool IsLoading { get; set; } = true;
     private TimeSpan ElapsedTime => DateTime.UtcNow - WorkoutSession?.StartTime ?? TimeSpan.Zero;
     private System.Threading.Timer _timer;
-    
-    [Parameter] public Guid SessionId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await LoadWorkoutSession();
-        _timer = new System.Threading.Timer(_ =>
-        {
-            InvokeAsync(StateHasChanged);
-        }, null, 0, 1000);
+        _timer = new System.Threading.Timer(_ => { InvokeAsync(StateHasChanged); }, null, 0, 1000);
     }
 
     private async Task LoadWorkoutSession()
@@ -60,19 +59,18 @@ else if (WorkoutSession != null)
     private async Task UpdateWeight(Guid exerciseId, int setNumber, decimal newWeight)
     {
         await WorkoutSessionService.UpdateExerciseWeight(SessionId, exerciseId, setNumber, newWeight);
+        await LoadWorkoutSession();
     }
 
     private async Task EndWorkout()
     {
-        // Implement the logic to end the workout
-        // This could involve calling an API endpoint to mark the workout as completed
-        // After ending the workout, you might want to navigate back to the dashboard
-        // NavigationManager.NavigateTo("/dashboard");
-        
+
+        NavigationManager.NavigateTo("/dashboard");
     }
 
     public void Dispose()
     {
         _timer?.Dispose();
     }
+
 }

@@ -60,13 +60,13 @@ public class WorkoutSessionsController : ControllerBase
             return BadRequest("Invalid workout plan ID");
         }
 
-        var userId = Guid.Parse(User.Identity.Name); // Get the user ID from the authenticated user
+        var userId = Guid.Parse(User.Identity.Name);
 
         var command = new StartWorkoutSession(
             Guid.NewGuid(),
             userId,
             request.WorkoutPlanId,
-            new List<WorkoutSessionExerciseDto>() // We'll populate this later
+            new List<WorkoutSessionExerciseDto>()
         );
 
         await _startWorkoutSessionHandler.HandleAsync(command);
@@ -88,17 +88,19 @@ public class WorkoutSessionsController : ControllerBase
     [HttpPost("start-from-plan")]
     public async Task<ActionResult<Guid>> StartWorkoutFromPlan([FromBody] StartWorkoutSessionDto dto)
     {
-        var userId = Guid.Parse(User.Identity.Name);
-        
+        if (!Guid.TryParse(User.Identity?.Name, out var userId))
+        {
+            return Unauthorized();
+        }
+
         var command = new StartWorkoutSession(
             Guid.NewGuid(),
             userId,
             dto.WorkoutPlanId,
-            dto.Exercises
+            new List<WorkoutSessionExerciseDto>() // We'll populate this in the handler
         );
-
-        await _startWorkoutSessionHandler.HandleAsync(command);
-        return Ok(command.Id);
+            await _startWorkoutSessionHandler.HandleAsync(command);
+            return Ok(command.Id);
     }
     
     [HttpPost("{sessionId:guid}/exercises/{exerciseId:guid}/set/{setNumber:int}/weight")]

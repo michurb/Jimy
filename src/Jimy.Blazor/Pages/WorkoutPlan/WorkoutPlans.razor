@@ -6,6 +6,7 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject IWorkoutSessionService WorkoutSessionService
 
 <main>
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -157,7 +158,8 @@
     
     private void StartWorkout(Guid workoutPlanId)
     {
-        NavigationManager.NavigateTo($"/start-workout/{workoutPlanId}");
+        selectedWorkoutPlan = workoutPlans.FirstOrDefault(wp => wp.Id == workoutPlanId);
+        showStartWorkoutModal = true;
     }
     
     private void NavigateToSignIn()
@@ -219,6 +221,29 @@
         CloseCreateWorkoutPlanModal();
         await LoadUserData();
         StateHasChanged();
+    }
+    
+    private void CloseStartWorkoutModal()
+    {
+        showStartWorkoutModal = false;
+        selectedWorkoutPlan = null;
+    }
+
+    private async Task ConfirmStartWorkout()
+    {
+        if (selectedWorkoutPlan != null)
+        {
+            try
+            {
+                var sessionId = await WorkoutSessionService.StartWorkoutSession(selectedWorkoutPlan.Id);
+                NavigationManager.NavigateTo($"/active-workout/{sessionId}");
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Failed to start workout: {ex.Message}";
+            }
+        }
+        CloseStartWorkoutModal();
     }
 
 }

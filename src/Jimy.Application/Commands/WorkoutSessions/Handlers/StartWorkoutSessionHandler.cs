@@ -10,13 +10,16 @@ public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSess
 {
     private readonly IWorkoutSessionRepository _sessionRepository;
     private readonly IWorkoutPlanRepository _planRepository;
+    private readonly IExerciseRepository _exerciseRepository;
     
     public StartWorkoutSessionHandler(
         IWorkoutSessionRepository sessionRepository,
-        IWorkoutPlanRepository planRepository)
+        IWorkoutPlanRepository planRepository,
+        IExerciseRepository exerciseRepository)
     {
         _sessionRepository = sessionRepository;
         _planRepository = planRepository;
+        _exerciseRepository = exerciseRepository;
     }
 
     public async Task HandleAsync(StartWorkoutSession command)
@@ -27,17 +30,30 @@ public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSess
         {
             throw new WorkoutPlanNotFoundException(command.WorkoutPlanId);
         }
+        
+        var exercises = new List<WorkoutSessionExercise>();
+        foreach (var planExercise in workoutPlan.Exercises)
+        {
+            var exercise = await _exerciseRepository.GetByIdAsync(planExercise.ExerciseId);
+            if (exercise != null)
+            {
+                exercises.Add(new WorkoutSessionExercise(
+                    exercise.Id,
+                    planExercise.Sets,
+                    planExercise.Reps,
+                    new Weight(0) // Initial weight set to 0
+                ));
+            }
+        }
 
-        // Create the workout session with exercises based on the plan
         var workoutSession = new WorkoutSession(
             new WorkoutSessionId(command.Id),
-            command.UserId,
+            new UserId(command.UserId),
             new WorkoutPlanId(command.WorkoutPlanId),
             DateTime.UtcNow,
-            command.Exercises.Select(e => 
-                new WorkoutSessionExercise(new ExerciseId(e.ExerciseId), new Sets(e.Sets), new Reps(e.Reps), new Weight(e.Weight))
-            ).ToList()
+            exercises
         );
+
 
         await _sessionRepository.AddAsync(workoutSession);
     }

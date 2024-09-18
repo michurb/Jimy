@@ -3,6 +3,9 @@
 public class WorkoutSessionExerciseDto
 {
     public Guid Id { get; set; }
+    public Guid ExerciseId { get; set; }
     public string Name { get; set; }
-    public List<SetDto> Sets { get; set; }
+    public int Sets { get; set; }
+    public int Reps { get; set; }
+    public decimal Weight { get; set; }
 }

@@ -23,14 +23,20 @@ public class WorkoutSessionService : IWorkoutSessionService
     
     public async Task<WorkoutSessionDto> GetSessionAsync(Guid sessionId)
     {
-        var result = await _httpClient.GetFromJsonAsync<WorkoutSessionDto>($"api/workout-sessions/{sessionId}");
-        return result;
+        var response = await _httpClient.GetAsync($"api/workout-sessions/{sessionId}");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<WorkoutSessionDto>();
     }
 
     public async Task UpdateExerciseWeight(Guid sessionId, Guid exerciseId, int setNumber, decimal weight)
     {
-        var updateDto = new UpdateWorkoutSessionExerciseDto { SetNumber = setNumber, Weight = weight };
-        await _httpClient.PostAsJsonAsync($"api/workout-sessions/{sessionId}/exercises/{exerciseId}/set/{setNumber}/weight", updateDto);
+        var updateDto = new UpdateWorkoutSessionExerciseDto
+        {
+            SetNumber = setNumber,
+            Weight = weight
+        };
+        var response = await _httpClient.PostAsJsonAsync($"api/workout-sessions/{sessionId}/exercises/{exerciseId}/weight", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task<Guid> StartWorkoutSession(Guid workoutPlanId)
@@ -44,14 +50,26 @@ public class WorkoutSessionService : IWorkoutSessionService
 
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         
-        var response = await _httpClient.PostAsJsonAsync("api/workout-sessions/start-from-plan", new { WorkoutPlanId = workoutPlanId });
+        var startSessionDto = new StartWorkoutSessionDto
+        {
+            WorkoutPlanId = workoutPlanId
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("api/workout-sessions/start", startSessionDto);
         
         if (response.IsSuccessStatusCode)
         {
-            return await response.Content.ReadFromJsonAsync<Guid>();
+            var sessionId = await response.Content.ReadFromJsonAsync<Guid>();
+            return sessionId;
         }
 
         throw new Exception($"Failed to start workout session: {response.StatusCode}");
+    }
+    
+    public async Task EndWorkoutSessionAsync(Guid sessionId)
+    {
+        var response = await _httpClient.PostAsync($"api/workout-sessions/{sessionId}/end", null);
+        response.EnsureSuccessStatusCode();
     }
     
     private async Task<string> GetTokenAsync()
