@@ -29,26 +29,6 @@ public class WorkoutSession
         _exercises.Add(new WorkoutSessionExercise(exerciseId, sets, reps, weight));
     }
 
-    public void UpdateExercise(ExerciseId exerciseId, Sets sets, Reps reps, Weight weight)
-    {
-        var exercise = _exercises.FirstOrDefault(e => e.ExerciseId == exerciseId);
-        if (exercise != null)
-        {
-            exercise.Update(sets, reps, weight);
-        }
-    }
-    
-    public void UpdateExerciseWeight(ExerciseId exerciseId, Sets setNumber, Weight weight)
-    {
-        var exercise = _exercises.FirstOrDefault(e => e.ExerciseId == exerciseId);
-        if (exercise == null)
-        {
-            throw new InvalidOperationException("Exercise not found.");
-        }
-
-        exercise.UpdateWeight(weight);
-    }
-
     public void End(DateTime endTime)
     {
         if (EndTime.HasValue)

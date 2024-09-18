@@ -22,7 +22,9 @@ internal sealed class GetUsersWorkoutSessionHandler : IQueryHandler<GetUsersWork
             .AsNoTracking()
             .Where(ws => ws.UserId == userId)
             .Include(ws => ws.Exercises)
-            .ThenInclude(wse => wse.Exercise) 
+            .ThenInclude(wse => wse.Exercise)
+            .Include(ws => ws.Exercises)
+            .ThenInclude(wse => wse.SetDetails)
             .OrderByDescending(ws => ws.StartTime)
             .Select(ws => new WorkoutSessionDto(
                 ws.Id.Value,
@@ -36,7 +38,10 @@ internal sealed class GetUsersWorkoutSessionHandler : IQueryHandler<GetUsersWork
                     e.Exercise.Name.Value,
                     e.Sets.Value,
                     e.Reps.Value,
-                    e.Weight.Value
+                    e.SetDetails.Select(s => new WorkoutSetDto(
+                        s.SetNumber.Value,
+                        s.Weight.Value
+                    ))
                 )).ToList()
             ))
             .ToListAsync();

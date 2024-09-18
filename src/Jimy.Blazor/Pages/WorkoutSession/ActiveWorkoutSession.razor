@@ -12,6 +12,7 @@
 }
 else if (WorkoutSession != null)
 {
+    <Timer></Timer>
     <div class="bg-white shadow-md rounded-lg p-6">
         <p class="text-xl font-semibold mb-4">Time Elapsed: @ElapsedTime.ToString(@"hh\:mm\:ss")</p>
 
@@ -19,12 +20,11 @@ else if (WorkoutSession != null)
         {
             <div class="mb-6 border-b pb-4">
                 <h4 class="text-lg font-semibold mb-2">@exercise.Name</h4>
-                @for (var i = 1; i <= exercise.Sets; i++)
+                @foreach (var set in exercise.SetDetails)
                 {
-                    var setNumber = i;
                     <div class="flex items-center mb-2">
-                        <span class="w-20">Set @setNumber:</span>
-                        <input type="number" value="@exercise.Weight" @onchange="e => UpdateWeight(exercise.Id, setNumber, decimal.Parse(e.Value.ToString()))" class="w-20 px-2 py-1 border rounded-md mr-2"/> kg
+                        <span class="w-20">Set @set.SetNumber:</span>
+                        <input type="number" value="@set.Weight" @onchange="e => UpdateWeight(exercise.Id, set.SetNumber, decimal.Parse(e.Value.ToString()))" class="w-20 px-2 py-1 border rounded-md mr-2"/> kg
                         <span class="ml-2">@exercise.Reps reps</span>
                     </div>
                 }
@@ -66,15 +66,11 @@ else if (WorkoutSession != null)
     {
         try
         {
-            // End the workout session
             await WorkoutSessionService.EndWorkoutSessionAsync(SessionId);
-            
-            // Navigate back to the dashboard
             NavigationManager.NavigateTo("/dashboard");
         }
         catch (Exception ex)
         {
-            // Handle any errors (e.g., show an error message to the user)
             Console.WriteLine($"Error ending workout: {ex.Message}");
         }
     }
@@ -83,4 +79,5 @@ else if (WorkoutSession != null)
     {
         _timer?.Dispose();
     }
+
 }

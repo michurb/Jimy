@@ -19,13 +19,20 @@ public sealed class UpdateWorkoutSessionExerciseWeightHandler : ICommandHandler<
         var exerciseId = new ExerciseId(command.ExerciseId);
         var weight = new Weight(command.Weight);
         var setNumber = new Sets(command.SetNumber);
+
         var session = await _sessionRepository.GetByIdAsync(sessionId);
         if (session == null)
         {
-            throw new WorkoutSessionNotFoundException(command.SessionId); // Custom exception
+            throw new WorkoutSessionNotFoundException(command.SessionId);
         }
-        
-        session.UpdateExerciseWeight(exerciseId, setNumber, weight);
+
+        var exercise = session.Exercises.FirstOrDefault(e => e.ExerciseId == exerciseId);
+        if (exercise == null)
+        {
+            throw new WorkoutExerciseNotFoundException(command.ExerciseId);
+        }
+
+        exercise.UpdateSetWeight(setNumber, weight);
         
         await _sessionRepository.UpdateAsync(session);
     }

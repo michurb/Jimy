@@ -36,11 +36,14 @@ public static class Extensions
             entity.StartTime,
             entity.EndTime,
             entity.Exercises.Select(x => new WorkoutSessionExerciseDto(
-            x.ExerciseId.Value,
-            x.Exercise.Id.Value,
-            x.Exercise.Name.Value,
-            x.Sets.Value,
-            x.Reps.Value,
-            x.Weight.Value
-        )));
+                x.ExerciseId.Value,
+                x.Exercise.Id.Value,
+                x.Exercise.Name.Value,
+                x.Sets.Value,
+                x.Reps.Value,
+                x.SetDetails.Select(s => new WorkoutSetDto(
+                    s.SetNumber.Value,
+                    s.Weight.Value
+                ))
+            )));
 }

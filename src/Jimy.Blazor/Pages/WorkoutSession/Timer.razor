@@ -5,6 +5,7 @@
         @(IsRunning ? "Stop" : "Start") Timer
     </button>
     <span class="ml-2">@DisplayTime</span>
+    <button @onclick="Reset" class="btn btn-secondary ml-2">Reset</button>
 </div>
 
 @code {

@@ -37,12 +37,14 @@ public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSess
             var exercise = await _exerciseRepository.GetByIdAsync(planExercise.ExerciseId);
             if (exercise != null)
             {
-                exercises.Add(new WorkoutSessionExercise(
+                var sessionExercise = new WorkoutSessionExercise(
                     exercise.Id,
                     planExercise.Sets,
                     planExercise.Reps,
-                    new Weight(0) // Initial weight set to 0
-                ));
+                    new Weight(1) // Initial weight set to 0
+                );
+
+                exercises.Add(sessionExercise);
             }
         }
 
@@ -53,7 +55,6 @@ public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSess
             DateTime.UtcNow,
             exercises
         );
-
 
         await _sessionRepository.AddAsync(workoutSession);
     }

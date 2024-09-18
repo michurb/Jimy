@@ -23,15 +23,22 @@ internal sealed class WorkoutSessionExerciseConfiguration : IEntityTypeConfigura
         builder.Property(wse => wse.Reps)
             .HasConversion(reps => reps.Value, value => new Reps(value));
 
-        builder.Property(wse => wse.Weight)
-            .HasConversion(weight => weight.Value, value => new Weight(value));
-
         builder.HasOne(wse => wse.Exercise)
             .WithMany()
             .HasForeignKey(wse => wse.ExerciseId);
-        builder.HasOne(wse => wse.Exercise)
-            .WithMany()
-            .HasForeignKey(wse => wse.ExerciseId);
+        
+        builder.OwnsMany(wse => wse.SetDetails, setBuilder =>
+        {
+            setBuilder.ToTable("WorkoutSets");
+            setBuilder.WithOwner().HasForeignKey("WorkoutSessionId", "ExerciseId");
+            setBuilder.Property(s => s.SetNumber)
+                .HasConversion(sets => sets.Value, value => new Sets(value))
+                .IsRequired();
+            setBuilder.Property(s => s.Weight)
+                .HasConversion(weight => weight.Value, value => new Weight(value))
+                .IsRequired();
+            setBuilder.HasKey("WorkoutSessionId", "ExerciseId", "SetNumber");
+        });
 
         builder.HasOne<WorkoutSession>()
             .WithMany(ws => ws.Exercises)
