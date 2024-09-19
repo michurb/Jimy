@@ -25,7 +25,7 @@
     private System.Timers.Timer _timer;
     private TimeSpan _time = TimeSpan.Zero;
     public bool IsRunning { get; private set; }
-    public string DisplayTime => _time.ToString(@"hh\:mm\:ss");
+    public string DisplayTime => _time.ToString(@":mm\:ss");
 
     protected override void OnInitialized()
     {

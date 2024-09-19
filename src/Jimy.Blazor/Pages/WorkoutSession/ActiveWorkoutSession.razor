@@ -69,6 +69,10 @@
     private async Task LoadWorkoutSession()
     {
         WorkoutSession = await WorkoutSessionService.GetSessionAsync(SessionId);
+        if (WorkoutSession.EndTime.HasValue)
+        {
+            NavigationManager.NavigateTo("/dashboard");
+        }
         WorkoutPlanName = await WorkoutPlanService.GetWorkoutPlanAsync(WorkoutSession.WorkoutPlanId);
         IsLoading = false;
     }
