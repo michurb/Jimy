@@ -1,0 +1,90 @@
+﻿@page "/activity-logs"
+@attribute [Authorize]
+@using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Models
+@using Jimy.Blazor.Shared
+@using Microsoft.AspNetCore.Authorization
+@inject IActivityLogService ActivityLogService
+@inject IAuthService AuthService
+@layout UserLayout
+
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Activity Logs</h1>
+
+    @if (activityLogs == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (!activityLogs.Any())
+    {
+        <p>No activity logs found.</p>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach (var log in activityLogs)
+            {
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <div class="px-6 py-4">
+                        <div class="font-bold text-xl mb-2">@log.ActivityType</div>
+                        <p class="text-gray-700 text-base mb-2">
+                            Date: @log.Date.ToShortDateString()
+                        </p>
+                        <p class="text-gray-700 text-base mb-2">
+                            Duration: @log.Duration minutes
+                        </p>
+                        @if (log.WorkoutPlanId.HasValue)
+                        {
+                            <p class="text-gray-700 text-base">
+                                Workout Plan: @log.WorkoutPlanId
+                            </p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <button @onclick="OpenCreateActivityLogModal" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+        Log Activity
+    </button>
+</div>
+
+@if (showCreateActivityLogModal)
+{
+    <CreateActivityLog OnClose="CloseCreateActivityLogModal" OnActivityLogCreated="HandleActivityLogCreated" />
+}
+
+@code {
+    private List<ActivityLogDto> activityLogs;
+    private bool showCreateActivityLogModal = false;
+    private UserDto currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await AuthService.GetCurrentUserAsync();
+        await LoadActivityLogs();
+    }
+
+    private async Task LoadActivityLogs()
+    {
+        activityLogs = await ActivityLogService.GetUserActivityLogsAsync();
+    }
+
+    private void OpenCreateActivityLogModal()
+    {
+        showCreateActivityLogModal = true;
+    }
+
+    private void CloseCreateActivityLogModal()
+    {
+        showCreateActivityLogModal = false;
+    }
+
+    private async Task HandleActivityLogCreated()
+    {
+        CloseCreateActivityLogModal();
+        await LoadActivityLogs();
+    }
+}

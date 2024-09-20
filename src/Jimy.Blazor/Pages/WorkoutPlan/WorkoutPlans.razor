@@ -30,7 +30,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach (var plan in workoutPlans)
                     {
-                        <div class="bg-white shadow-md rounded-lg p-4">
+                        <div class="bg-white shadow-md rounded-lg p-4 mb-4">
                             <h3 class="text-lg font-semibold mb-2 text-center mx-auto">@plan.Name</h3>
                             <div>
                                 <table class="table-auto w-full text-left">
@@ -53,16 +53,22 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="mt-4">
-                                <button @onclick="() => OpenEditWorkoutPlanModal(plan)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                                    Edit
-                                </button>
-                                <button @onclick="() => DeleteWorkoutPlan(plan.Id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">
-                                    Delete
-                                </button>
-                                <button @onclick="() => StartWorkout(plan.Id)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2">
-                                    Start Workout
-                                </button>
+                            <div class="mt-6 flex flex-col items-center">
+                                <div class="w-full max-w-sm">
+                                    <div class="flex justify-center mb-2">
+                                        <button @onclick="() => OpenEditWorkoutPlanModal(plan)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mr-2">
+                                            Edit
+                                        </button>
+                                        <button @onclick="() => DeleteWorkoutPlan(plan.Id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                            Delete
+                                        </button>
+                                    </div>
+                                    <div class="w-full">
+                                        <button @onclick="() => StartWorkout(plan.Id)" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                            Start Workout
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     }

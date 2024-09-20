@@ -1,10 +1,19 @@
 module.exports = {
   content: [
     './**/*.html',
-    './**/*.razor'
+    './**/*.razor',
+    './**/*.cshtml',
+    './**/*.razor.cs',
+    './**/*.js',
+    './**/*.cs'
   ],
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/typography'),
+    require('tailwindcss-children'),
+  ],
 }

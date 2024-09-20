@@ -27,6 +27,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IWorkoutPlanService, WorkoutPlanService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IWorkoutSessionService, WorkoutSessionService>();
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 builder.Services.AddScoped<ApiAuthenticationStateProvider>();

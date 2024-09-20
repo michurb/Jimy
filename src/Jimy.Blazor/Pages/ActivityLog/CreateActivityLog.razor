@@ -1,0 +1,72 @@
+﻿@using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Models
+@using Jimy.Blazor.Shared
+@layout UserLayout
+@inject IActivityLogService ActivityLogService
+@inject IAuthService AuthService
+@inject IWorkoutPlanService WorkoutPlanService
+
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="create-activity-log-modal">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Log Activity</h3>
+        <EditForm Model="@activityLog" OnValidSubmit="CreateActivityLogPost">
+            <DataAnnotationsValidator />
+
+            <div class="mb-4">
+                <label for="activityType" class="block text-sm font-medium text-gray-700">Activity Type</label>
+                <InputText id="activityType" @bind-Value="activityLog.ActivityType" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
+                <ValidationMessage For="@(() => activityLog.ActivityType)" class="text-red-500 text-sm" />
+            </div>
+
+            <div class="mb-4">
+                <label for="duration" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                <InputNumber id="duration" @bind-Value="activityLog.Duration" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
+                <ValidationMessage For="@(() => activityLog.Duration)" class="text-red-500 text-sm" />
+            </div>
+
+            <div class="mb-4">
+                <label for="workoutPlanId" class="block text-sm font-medium text-gray-700">Workout Plan (optional)</label>
+                <InputSelect id="workoutPlanId" @bind-Value="activityLog.WorkoutPlanId" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm">
+                    <option value="">Select a workout plan</option>
+                    @foreach (var plan in workoutPlans)
+                    {
+                        <option value="@plan.Id">@plan.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="button" @onclick="HandleClose" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded-md">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md">Log Activity</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnActivityLogCreated { get; set; }
+
+    private CreateActivityLogDto activityLog = new CreateActivityLogDto();
+    private List<WorkoutPlanDto> workoutPlans = new List<WorkoutPlanDto>();
+    private UserDto currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await AuthService.GetCurrentUserAsync();
+        workoutPlans = await WorkoutPlanService.GetUserWorkoutPlansAsync();
+        activityLog.Date = DateTime.UtcNow;
+    }
+
+    private async Task CreateActivityLogPost()
+    {
+        activityLog.UserId = currentUser.Id;
+        await ActivityLogService.CreateActivityLogAsync(activityLog);
+        await OnActivityLogCreated.InvokeAsync();
+    }
+
+    private async Task HandleClose()
+    {
+        await OnClose.InvokeAsync();
+    }
+}

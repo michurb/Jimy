@@ -2,6 +2,7 @@
 using Jimy.Application.Commands.ActivityLogs;
 using Jimy.Application.DTO;
 using Jimy.Application.Queries.ActivityLogs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jimy.Api.Controllers;
@@ -40,10 +41,15 @@ public class ActivityLogsController : ControllerBase
         }
         return Ok(result);
     }
-
-    [HttpGet("user/{userId:guid}")]
-    public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs(Guid userId)
+    [Authorize]
+    [HttpGet("user")]
+    public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs()
     {
+        if (string.IsNullOrWhiteSpace(User.Identity?.Name))
+        {
+            return Unauthorized();
+        }
+        var userId = Guid.Parse(User.Identity.Name);
         var result = await _getUserActivityLogHandler.HandleAsync(new GetUserActivityLog { UserId = userId });
         return Ok(result);
     }

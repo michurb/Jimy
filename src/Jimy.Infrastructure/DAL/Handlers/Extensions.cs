@@ -12,7 +12,12 @@ public static class Extensions
         => new(entity.Id.Value, entity.Name.Value, entity.Description.Value);
     
     public static ActivityLogDto AsDto(this Core.Entities.ActivityLog entity)
-        => new(entity.Id.Value, entity.UserId.Value, entity.Date.Value, entity.ActivityType.Value, entity.Duration.Minutes, entity.WorkoutPlanId.Value );
+        => new(entity.Id.Value,
+            entity.UserId.Value,
+            entity.Date.Value,
+            entity.ActivityType.Value,
+            entity.Duration.Minutes,
+            entity.WorkoutPlanId?.Value );
     
     public static WorkoutPlanDto AsDto(this Core.Entities.WorkoutPlan entity)
         => new(
