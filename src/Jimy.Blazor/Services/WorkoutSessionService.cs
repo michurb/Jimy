@@ -65,6 +65,10 @@ public class WorkoutSessionService : IWorkoutSessionService
             return sessionId;
         }
 
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            throw new Exception("You already have an active workout session.");
+        }
         throw new Exception($"Failed to start workout session: {response.StatusCode}");
     }
     

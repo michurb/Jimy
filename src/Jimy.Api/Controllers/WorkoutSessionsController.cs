@@ -65,11 +65,6 @@ public class WorkoutSessionsController : ControllerBase
     [HttpPost("start")]
     public async Task<ActionResult<WorkoutSessionDto>> StartSession([FromBody]StartWorkoutSessionDto request)
     {
-        if (request.WorkoutPlanId == Guid.Empty)
-        {
-            return BadRequest("Invalid workout plan ID");
-        }
-
         var userId = Guid.Parse(User.Identity.Name);
 
         var command = new StartWorkoutSession(

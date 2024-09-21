@@ -44,8 +44,8 @@ public class ActivityLogsController : ControllerBase
     }
 
     //[Authorize]
-    [HttpGet("user/{userId:guid}")]
-    public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs(Guid userId)
+    [HttpGet("user")]
+    public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs()
     {
         if (string.IsNullOrWhiteSpace(User.Identity?.Name))
         {
