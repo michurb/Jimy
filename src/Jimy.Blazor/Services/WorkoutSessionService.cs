@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Models;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -82,4 +83,34 @@ public class WorkoutSessionService : IWorkoutSessionService
         response.EnsureSuccessStatusCode();
     }
 
+    public async Task<WorkoutSessionDto> GetActiveWorkoutSessionAsync()
+    {
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+    
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new UnauthorizedAccessException("No authentication token found.");
+        }
+
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    
+        var response = await _httpClient.GetAsync("api/workout-sessions/active");
+    
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(content))
+            {
+                return null;
+            }
+            return JsonSerializer.Deserialize<WorkoutSessionDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+
+        throw new Exception($"Failed to get active workout session: {response.StatusCode}");
+    }
 }

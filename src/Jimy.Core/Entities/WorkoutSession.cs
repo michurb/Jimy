@@ -1,4 +1,5 @@
-﻿using Jimy.Core.ValueObjects;
+﻿using Jimy.Core.Exceptions;
+using Jimy.Core.ValueObjects;
 
 namespace Jimy.Core.Entities;
 
@@ -11,6 +12,7 @@ public class WorkoutSession
     public DateTime? EndTime { get; private set; }
     private readonly List<WorkoutSessionExercise> _exercises = new();
     public IReadOnlyCollection<WorkoutSessionExercise> Exercises => _exercises.AsReadOnly();
+    private const int MaxWorkoutDurationHours = 5;
 
     private WorkoutSession() { }
 
@@ -33,8 +35,15 @@ public class WorkoutSession
     {
         if (EndTime.HasValue)
         {
-            throw new InvalidOperationException("Workout session has already ended.");
+            throw new WorkoutSessionAlreadyEndedException(Id.Value);
         }
+
+        TimeSpan duration = endTime - StartTime;
+        if (duration.TotalHours > MaxWorkoutDurationHours)
+        {
+            throw new WorkoutSessionExceedMaxDurationException(Id.Value, MaxWorkoutDurationHours);
+        }
+
         EndTime = endTime;
     }
 }

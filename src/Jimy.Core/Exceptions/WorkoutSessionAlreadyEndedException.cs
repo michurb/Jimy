@@ -2,6 +2,8 @@
 
 public sealed class WorkoutSessionAlreadyEndedException : CoreException
 {
-    public WorkoutSessionAlreadyEndedException (Guid workoutSessionId) 
-        : base($"WorkoutSession with ID {workoutSessionId} has been already ended.") {}
+    public WorkoutSessionAlreadyEndedException(Guid sessionId) 
+        : base($"Workout session {sessionId} has already been ended.")
+    {
+    }
 }

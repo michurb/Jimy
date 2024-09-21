@@ -1,6 +1,5 @@
 ﻿using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Models;
-using Jimy.Blazor.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -54,11 +53,22 @@ public partial class Dashboard : ComponentBase
     {
         try
         {
-            
+            if (currentUser != null)
+            {
+                activeWorkoutSession = await WorkoutSessionService.GetActiveWorkoutSessionAsync();
+            }
         }
         catch (Exception ex)
         {
             errorMessage = $"Error checking active workout session: {ex.Message}";
+        }
+    }
+
+    private void ResumeWorkout()
+    {
+        if (activeWorkoutSession != null)
+        {
+            NavigationManager.NavigateTo($"/active-workout/{activeWorkoutSession.Id}");
         }
     }
 

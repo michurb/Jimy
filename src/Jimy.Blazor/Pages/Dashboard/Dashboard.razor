@@ -7,39 +7,73 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IWorkoutPlanService WorkoutPlanService
 
-    <main>
-        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            @if (isLoading)
-            {
-                <p>Loading user information...</p>
-            }
-            else if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">@errorMessage</span>
+<main>
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        @if (isLoading)
+        {
+        <p>Loading user information...</p>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">@errorMessage</span>
+        </div>
+        }
+        else if (currentUser != null)
+        {
+        <div class="px-4 py-6 sm:px-0">
+            <div class="border-4 border-dashed border-gray-200 rounded-lg p-4">
+                <h2 class="text-2xl font-semibold mb-4">Welcome, @currentUser.Username!</h2>
+                <div class="mt-4">
+                    <button @onclick="OpenCreateWorkoutPlanModal" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                        Create Workout Plan
+                    </button>
+                    @if (activeWorkoutSession != null)
+                    {
+                    <button @onclick="ResumeWorkout" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-2">
+                        Resume Workout
+                    </button>
+                    }
                 </div>
-            }
-            else if (currentUser != null)
+            </div>
+            @if (activeWorkoutSession != null)
             {
-                <div class="px-4 py-6 sm:px-0">
-                    <div class="border-4 border-dashed border-gray-200 rounded-lg p-4">
-                        <h2 class="text-2xl font-semibold mb-4">Welcome, @currentUser.Username!</h2>
-                        <div class="mt-4">
-                            <button @onclick="OpenCreateWorkoutPlanModal" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                                Create Workout Plan
-                            </button>
+            <div class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        Active Workout Session
+                    </h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                        Started at: @activeWorkoutSession.StartTime.ToString("g")
+                    </p>
+                </div>
+                <div class="border-t border-gray-200">
+                    <dl>
+                        @foreach (var exercise in activeWorkoutSession.Exercises)
+                        {
+                        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                @exercise.Name
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                Sets: @exercise.Sets, Reps: @exercise.Reps
+                            </dd>
                         </div>
-                    </div>
+                        }
+                    </dl>
                 </div>
-            }
-            else
-            {
-                <p>No user data available.</p>
+            </div>
             }
         </div>
-    </main>
+        }
+        else
+        {
+        <p>No user data available.</p>
+        }
+    </div>
+</main>
 
 @if (showCreateWorkoutPlanModal)
 {
-    <CreateWorkoutPlan OnClose="CloseCreateWorkoutPlanModal" OnPlanCreated="HandleWorkoutPlanCreated" />
+    <CreateWorkoutPlan OnClose="CloseCreateWorkoutPlanModal" OnPlanCreated="HandleWorkoutPlanCreated"/>
 }

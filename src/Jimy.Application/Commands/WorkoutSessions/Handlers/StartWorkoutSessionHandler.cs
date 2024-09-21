@@ -1,4 +1,5 @@
 ﻿using Jimy.Application.Abstraction;
+using Jimy.Application.Exceptions;
 using Jimy.Core.Entities;
 using Jimy.Core.Exceptions;
 using Jimy.Core.Interfaces;
@@ -24,11 +25,18 @@ public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSess
 
     public async Task HandleAsync(StartWorkoutSession command)
     {
+        var userId = new UserId(command.UserId);
         var workoutPlanId = new WorkoutPlanId(command.WorkoutPlanId);
         var workoutPlan = await _planRepository.GetByIdAsync(workoutPlanId);
+        var activeWrokotuSessions = await _sessionRepository.GetActiveWorkoutSessionsAsync(userId);
         if (workoutPlan == null)
         {
             throw new WorkoutPlanNotFoundException(command.WorkoutPlanId);
+        }
+        
+        if (activeWrokotuSessions.Any())
+        {
+            throw new ActiveWorkoutSessionAlreadyExistsException();
         }
         
         var exercises = new List<WorkoutSessionExercise>();
@@ -41,7 +49,7 @@ public sealed class StartWorkoutSessionHandler: ICommandHandler<StartWorkoutSess
                     exercise.Id,
                     planExercise.Sets,
                     planExercise.Reps,
-                    new Weight(1) // Initial weight set to 0
+                    new Weight(1)
                 );
 
                 exercises.Add(sessionExercise);

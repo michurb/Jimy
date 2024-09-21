@@ -40,4 +40,13 @@ internal sealed class SqlServerWorkoutSessionRepository : IWorkoutSessionReposit
         var workoutSession = await GetByIdAsync(id);
         _workoutSessions.Remove(workoutSession);
     }
+    
+    public async Task <IEnumerable<WorkoutSession>> GetActiveWorkoutSessionsAsync(UserId userId)
+    {
+        return await _workoutSessions
+            .Include(x => x.Exercises)
+            .ThenInclude(x => x.Exercise)
+            .Where(x => x.UserId == userId && x.EndTime == null)
+            .ToListAsync();
+    }
 }

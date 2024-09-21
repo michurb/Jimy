@@ -31,6 +31,7 @@ public class WorkoutPlansController : ControllerBase
         _getUsersWorkoutPlansHandler = getUsersWorkoutPlansHandler;
     }
 
+    //[Authorize]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<WorkoutPlanDto>> Get(Guid id)
     {
@@ -42,7 +43,7 @@ public class WorkoutPlansController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet("user")]
     public async Task<ActionResult<IEnumerable<WorkoutPlanDto>>> GetUserWorkoutPlans()
     {
@@ -55,6 +56,7 @@ public class WorkoutPlansController : ControllerBase
         return Ok(result);
     }
 
+    //[Authorize]
     [HttpPost]
     public async Task<ActionResult> Create(CreateWorkoutPlan command)
     {
@@ -62,6 +64,7 @@ public class WorkoutPlansController : ControllerBase
         return NoContent();
     }
 
+    //[Authorize]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateWorkoutPlan command)
     {
@@ -73,6 +76,7 @@ public class WorkoutPlansController : ControllerBase
         return NoContent();
     }
 
+    //[Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

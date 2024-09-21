@@ -1,4 +1,4 @@
-﻿using Jimy.Application.Abstraction;
+using Jimy.Application.Abstraction;
 using Jimy.Application.Commands.ActivityLogs;
 using Jimy.Application.DTO;
 using Jimy.Application.Queries.ActivityLogs;
@@ -31,6 +31,7 @@ public class ActivityLogsController : ControllerBase
         _getUserActivityLogHandler = getUserActivityLogHandler;
     }
 
+    //[Authorize]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ActivityLogDto>> Get(Guid id)
     {
@@ -41,9 +42,10 @@ public class ActivityLogsController : ControllerBase
         }
         return Ok(result);
     }
-    [Authorize]
-    [HttpGet("user")]
-    public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs()
+
+    //[Authorize]
+    [HttpGet("user/{userId:guid}")]
+    public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs(Guid userId)
     {
         if (string.IsNullOrWhiteSpace(User.Identity?.Name))
         {
@@ -54,6 +56,7 @@ public class ActivityLogsController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> Create(CreateActivityLog command)
     {
@@ -61,6 +64,7 @@ public class ActivityLogsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateActivityLog command)
     {
@@ -72,6 +76,7 @@ public class ActivityLogsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

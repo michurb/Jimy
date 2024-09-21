@@ -2,6 +2,7 @@
 using Jimy.Application.Commands.Exercises;
 using Jimy.Application.DTO;
 using Jimy.Application.Queries.Exercises;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jimy.Api.Controllers;
@@ -30,6 +31,7 @@ public class ExercisesController : ControllerBase
         _getExercisesHandler = getExercisesHandler;
     }
 
+    //[Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetAll()
     {
@@ -37,6 +39,7 @@ public class ExercisesController : ControllerBase
         return Ok(result);
     }
 
+    //[Authorize]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ExerciseDto>> Get(Guid id)
     {
@@ -48,6 +51,7 @@ public class ExercisesController : ControllerBase
         return Ok(result);
     }
 
+    //[Authorize (Policy = "is-admin")]
     [HttpPost]
     public async Task<ActionResult> Create(CreateExercise command)
     {
@@ -55,6 +59,7 @@ public class ExercisesController : ControllerBase
         return NoContent();
     }
 
+    //[Authorize (Policy = "is-admin")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateExercise command)
     {
@@ -65,7 +70,8 @@ public class ExercisesController : ControllerBase
         await _updateExerciseHandler.HandleAsync(command);
         return NoContent();
     }
-
+    
+    [Authorize (Policy = "is-admin")]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
