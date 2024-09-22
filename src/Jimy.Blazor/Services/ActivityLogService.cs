@@ -57,4 +57,25 @@ public class ActivityLogService : IActivityLogService
             throw new Exception($"Failed to create activity log: {errorContent}");
         }
     }
+
+    public async Task DeleteActivityLogAsync(Guid activityLogId)
+    {
+        var client = _httpClient.CreateClient("MainApi");
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await client.DeleteAsync($"api/activity-logs/{activityLogId}");
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateActivityLogAsync(ActivityLogDto activityLog)
+    {
+        var client = _httpClient.CreateClient("MainApi");
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+
+        var response = await client.PutAsJsonAsync($"api/activity-logs/{activityLog.Id}", activityLog);
+        response.EnsureSuccessStatusCode();
+    }
 }
