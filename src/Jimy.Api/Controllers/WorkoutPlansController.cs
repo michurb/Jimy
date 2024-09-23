@@ -31,7 +31,9 @@ public class WorkoutPlansController : ControllerBase
         _getUsersWorkoutPlansHandler = getUsersWorkoutPlansHandler;
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Get workout plan by id")]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<WorkoutPlanDto>> Get(Guid id)
     {
@@ -43,7 +45,9 @@ public class WorkoutPlansController : ControllerBase
         return Ok(result);
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Get workout plans for current user")]
     [HttpGet("user")]
     public async Task<ActionResult<IEnumerable<WorkoutPlanDto>>> GetUserWorkoutPlans()
     {
@@ -56,7 +60,10 @@ public class WorkoutPlansController : ControllerBase
         return Ok(result);
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Create new workout plan")]
     [HttpPost]
     public async Task<ActionResult> Create(CreateWorkoutPlan command)
     {
@@ -64,7 +71,10 @@ public class WorkoutPlansController : ControllerBase
         return NoContent();
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Update workout plan")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateWorkoutPlan command)
     {
@@ -76,7 +86,10 @@ public class WorkoutPlansController : ControllerBase
         return NoContent();
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Delete workout plan")]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

@@ -36,7 +36,13 @@ public class WorkoutSessionsController : ControllerBase
         _getUserActiveWorkoutSessionHandler = getUserActiveWorkoutSessionHandler;
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Get workout session by id",
+        Description = "Returns workout session by id"
+    )]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<WorkoutSessionDto>> Get(Guid id)
     {
@@ -44,7 +50,13 @@ public class WorkoutSessionsController : ControllerBase
         return Ok(result);
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Get workout sessions by user id",
+        Description = "Returns workout sessions by user id"
+    )]
     [HttpGet("user/{userId:guid}")]
     public async Task<ActionResult<IEnumerable<WorkoutSessionDto>>> GetUserWorkoutSessions(Guid userId)
     {
@@ -52,7 +64,13 @@ public class WorkoutSessionsController : ControllerBase
         return Ok(result);
     }
     
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Get active workout session",
+        Description = "Returns active workout session"
+    )]
     [HttpGet("active")]
     public async Task<ActionResult<WorkoutSessionDto>> GetActiveSession()
     {
@@ -62,6 +80,12 @@ public class WorkoutSessionsController : ControllerBase
     }
 
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(
+        Summary = "Start workout session",
+        Description = "Starts workout session"
+    )]
     [HttpPost("start")]
     public async Task<ActionResult<WorkoutSessionDto>> StartSession([FromBody]StartWorkoutSessionDto request)
     {
@@ -79,6 +103,12 @@ public class WorkoutSessionsController : ControllerBase
     }
 
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(
+        Summary = "End workout session",
+        Description = "Ends workout session"
+    )]
     [HttpPost("{id:guid}/end")]
     public async Task<ActionResult> EndSession(Guid id)
     {
@@ -88,6 +118,11 @@ public class WorkoutSessionsController : ControllerBase
     }
 
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(
+        Summary = "Update workout session exercise weight in workout session",
+        Description = "Updates workout session exercise weight"
+    )]
     [HttpPost("{sessionId:guid}/exercises/{exerciseId:guid}/set/{setNumber:int}/weight")]
     public async Task<ActionResult> UpdateWeight(Guid sessionId, Guid exerciseId, int setNumber,
         [FromBody] UpdateWorkoutSessionExerciseDto dto)

@@ -31,7 +31,9 @@ public class ActivityLogsController : ControllerBase
         _getUserActivityLogHandler = getUserActivityLogHandler;
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Get activity log by id")]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ActivityLogDto>> Get(Guid id)
     {
@@ -43,7 +45,10 @@ public class ActivityLogsController : ControllerBase
         return Ok(result);
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Get activity logs of current user")]
     [HttpGet("user")]
     public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetUserActivityLogs()
     {
@@ -57,6 +62,9 @@ public class ActivityLogsController : ControllerBase
     }
 
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Create a new activity log")]
     [HttpPost]
     public async Task<ActionResult> Create(CreateActivityLog command)
     {
@@ -65,6 +73,9 @@ public class ActivityLogsController : ControllerBase
     }
 
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(Summary = "Update an existing activity log")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateActivityLog command)
     {
@@ -77,6 +88,8 @@ public class ActivityLogsController : ControllerBase
     }
 
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(Summary = "Delete an existing activity log")]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {

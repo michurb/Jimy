@@ -31,7 +31,9 @@ public class ExercisesController : ControllerBase
         _getExercisesHandler = getExercisesHandler;
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Get all exercises")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetAll()
     {
@@ -39,7 +41,10 @@ public class ExercisesController : ControllerBase
         return Ok(result);
     }
 
-    //[Authorize]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Get an exercise by id")]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ExerciseDto>> Get(Guid id)
     {
@@ -51,7 +56,8 @@ public class ExercisesController : ControllerBase
         return Ok(result);
     }
 
-    //[Authorize (Policy = "is-admin")]
+    [Authorize (Policy = "is-admin")]
+    [SwaggerOperation(Summary = "Create an exercise")]
     [HttpPost]
     public async Task<ActionResult> Create(CreateExercise command)
     {
@@ -59,7 +65,9 @@ public class ExercisesController : ControllerBase
         return NoContent();
     }
 
-    //[Authorize (Policy = "is-admin")]
+    [Authorize (Policy = "is-admin")]
+    [producesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(Summary = "Update an exercise")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateExercise command)
     {
@@ -72,6 +80,8 @@ public class ExercisesController : ControllerBase
     }
     
     [Authorize (Policy = "is-admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(Summary = "Delete an exercise")]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
