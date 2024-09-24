@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Blazored.LocalStorage;
 using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Auth;
 using Jimy.Blazor.Models;
@@ -12,14 +13,14 @@ namespace Jimy.Blazor.Services;
 public class AuthService : IAuthService
 {
     private readonly IHttpClientFactory _httpClient;
-    private readonly IJSRuntime _jsRuntime;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly AuthenticationStateProvider _authStateProvider;
+    private readonly ILocalStorageService _localStorage;
 
-    public AuthService(IHttpClientFactory httpClient, IJSRuntime jsRuntime, IServiceProvider serviceProvider)
+    public AuthService(IHttpClientFactory httpClient, AuthenticationStateProvider authStateProvider, ILocalStorageService localStorage)
     {
         _httpClient = httpClient;
-        _jsRuntime = jsRuntime;
-        _serviceProvider = serviceProvider;
+        _authStateProvider = authStateProvider;
+        _localStorage = localStorage;
     }
 
     public async Task<AuthResponseDto> SignInAsync(SignInDto signInDto)
@@ -36,11 +37,10 @@ public class AuthService : IAuthService
             };
             var authResponse = JsonSerializer.Deserialize<AuthResponseDto>(content, options);
             
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", authResponse.AccessToken);
+            await _localStorage.SetItemAsync("authToken", authResponse.AccessToken);
 
-            var user = await GetCurrentUserAsync();
-            var authStateProvider = _serviceProvider.GetService<AuthenticationStateProvider>() as ApiAuthenticationStateProvider;
-            await authStateProvider.MarkUserAsAuthenticated(user);
+            ((ApiAuthenticationStateProvider)_authStateProvider).MarkUserAsAuthenticated(authResponse.AccessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", authResponse.AccessToken);
         
             return authResponse;
         }
@@ -67,7 +67,7 @@ public class AuthService : IAuthService
     public async Task<UserDto> GetCurrentUserAsync()
     {
         var client = _httpClient.CreateClient("MainApi");
-        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        var token = await _localStorage.GetItemAsync<string>("authToken");
         
         if (string.IsNullOrEmpty(token))
         {
@@ -93,6 +93,7 @@ public class AuthService : IAuthService
     
     public async Task SignOutAsync()
     {
-        await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        await _localStorage.RemoveItemAsync("authToken");
+        ((ApiAuthenticationStateProvider)_authStateProvider).MarkUserAsLoggedOut();
     }
 }

@@ -4,6 +4,7 @@ using Jimy.Application.DTO;
 using Jimy.Application.Queries.ActivityLogs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Jimy.Api.Controllers;
 

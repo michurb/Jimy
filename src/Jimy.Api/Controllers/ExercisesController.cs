@@ -4,6 +4,7 @@ using Jimy.Application.DTO;
 using Jimy.Application.Queries.Exercises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Jimy.Api.Controllers;
 
@@ -66,7 +67,7 @@ public class ExercisesController : ControllerBase
     }
 
     [Authorize (Policy = "is-admin")]
-    [producesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [SwaggerOperation(Summary = "Update an exercise")]
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update(Guid id, UpdateExercise command)

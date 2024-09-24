@@ -4,6 +4,7 @@ using Jimy.Application.DTO;
 using Jimy.Application.Queries.WorkoutPlans;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using WorkoutSessionDto = Jimy.Application.DTO.WorkoutSessionDto;
 using WorkoutSessionExerciseDto = Jimy.Application.DTO.WorkoutSessionExerciseDto;
 
