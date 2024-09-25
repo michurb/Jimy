@@ -71,9 +71,10 @@ public class WorkoutSessionsController : ControllerBase
         Summary = "Get workout sessions by user id",
         Description = "Returns workout sessions by user id"
     )]
-    [HttpGet("user/{userId:guid}")]
-    public async Task<ActionResult<IEnumerable<WorkoutSessionDto>>> GetUserWorkoutSessions(Guid userId)
+    [HttpGet("user")]
+    public async Task<ActionResult<IEnumerable<WorkoutSessionDto>>> GetUserWorkoutSessions()
     {
+        var userId = Guid.Parse(User.Identity.Name);
         var result = await _getUsersWorkoutSessionHandler.HandleAsync(new GetUsersWorkoutSession { UserId = userId });
         return Ok(result);
     }

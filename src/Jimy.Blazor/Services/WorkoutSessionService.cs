@@ -104,4 +104,17 @@ public class WorkoutSessionService : IWorkoutSessionService
 
         throw new CouldNotGetRecentWorkoutSessionsException();
     }
+
+    public async Task<IEnumerable<WorkoutSessionDto>> GetUsersWorkoutSessionsAsync()
+    {
+        var client = await _baseHttpClient.GetClientAsync();
+        var response = await client.GetAsync("api/workout-sessions/user");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<IEnumerable<WorkoutSessionDto>>();
+        }
+
+        throw new CouldNotGetUsersWorkoutSessionsException();
+    }
 }

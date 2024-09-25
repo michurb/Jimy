@@ -89,7 +89,7 @@ public partial class Dashboard : ComponentBase
     {
         try
         {
-            recentSessions = await WorkoutSessionService.GetRecentWorkoutSessionsAsync(5);
+            recentSessions = await WorkoutSessionService.GetRecentWorkoutSessionsAsync(6);
         }
         catch (Exception ex)
         {
@@ -106,5 +106,10 @@ public partial class Dashboard : ComponentBase
     private void NavigateToSignIn()
     {
         NavigationManager.NavigateTo("/signin");
+    }
+    
+    private void ShowSessionDetails(Guid sessionId)
+    {
+        NavigationManager.NavigateTo($"/workout-session/{sessionId}");
     }
 }

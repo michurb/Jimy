@@ -1,0 +1,57 @@
+﻿@page "/workout-history"
+@using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Shared
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject IWorkoutSessionService WorkoutSessionService
+@inject NavigationManager NavigationManager
+@layout UserLayout
+
+<h2 class="text-2xl font-semibold mb-4">Workout History</h2>
+
+@if (workoutSessions == null)
+{
+    <p>Loading...</p>
+}
+else if (!workoutSessions.Any())
+{
+    <p>No workout sessions found.</p>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach (var session in workoutSessions)
+        {
+            <div class="bg-white shadow-md rounded-lg p-4">
+                <h3 class="font-semibold mb-2">@session.StartTime.ToString("g")</h3>
+                <p>Duration: @((session.EndTime - session.StartTime)?.ToString(@"hh\:mm\:ss"))</p>
+                @foreach(var exercise in session.Exercises)
+                {
+                    <p>@exercise.Name @exercise.Sets sets, @exercise.Reps reps</p>
+                }
+                <button @onclick="() => ShowSessionDetails(session.Id)" class="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    View Details
+                </button>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private IEnumerable<WorkoutSessionDto> workoutSessions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkoutSessions();
+    }
+
+    private async Task LoadWorkoutSessions()
+    {
+        workoutSessions = await WorkoutSessionService.GetUsersWorkoutSessionsAsync();
+    }
+
+    private void ShowSessionDetails(Guid sessionId)
+    {
+        NavigationManager.NavigateTo($"/workout-session/{sessionId}");
+    }
+}
