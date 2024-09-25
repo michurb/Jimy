@@ -16,23 +16,44 @@ else
 {
     <div class="bg-white shadow-md rounded-lg p-4">
         <h3 class="font-semibold mb-2">Session Start: @session.StartTime.ToString("g")</h3>
-        <p>Duration: @((session.EndTime - session.StartTime)?.ToString(@"hh\:mm\:ss"))</p>
+        <p class="mb-4">Duration: @((session.EndTime - session.StartTime)?.ToString(@"hh\:mm\:ss"))</p>
+
         <h4 class="font-semibold mt-4 mb-2">Exercises:</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            @foreach (var exercise in session.Exercises)
-            {
-                <div class="border p-2 rounded">
-                    <h5 class="font-semibold">@exercise.Name</h5>
-                    <p>Sets: @exercise.Sets, Reps: @exercise.Reps</p>
-                    <h6 class="font-semibold mt-2">Set Details:</h6>
-                    <ul>
-                        @foreach (var set in exercise.SetDetails)
-                        {
-                            <li>Set @set.SetNumber: @set.Weight kg</li>
-                        }
-                    </ul>
-                </div>
-            }
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="py-2 px-4 border-b">Exercise</th>
+                        <th class="py-2 px-4 border-b">Sets</th>
+                        <th class="py-2 px-4 border-b">Reps</th>
+                        <th class="py-2 px-4 border-b">Set Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exercise in session.Exercises)
+                    {
+                        <tr>
+                            <td class="py-2 px-4 border-b">@exercise.Name</td>
+                            <td class="py-2 px-4 border-b text-center">@exercise.Sets</td>
+                            <td class="py-2 px-4 border-b text-center">@exercise.Reps</td>
+                            <td class="py-2 px-4 border-b">
+                                <ul class="list-disc list-inside">
+                                    @foreach (var set in exercise.SetDetails)
+                                    {
+                                        <li>Set @set.SetNumber: @set.Weight kg</li>
+                                    }
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+            <h5 class="font-semibold mb-2">Session Summary:</h5>
+            <p>Total Sets: @session.Exercises.Sum(e => e.Sets)</p>
+            <p>Total Weight Lifted: @session.Exercises.SelectMany(e => e.SetDetails).Sum(s => s.Weight) kg</p>
         </div>
     </div>
 }

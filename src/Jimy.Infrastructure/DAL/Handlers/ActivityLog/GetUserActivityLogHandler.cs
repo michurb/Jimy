@@ -19,6 +19,7 @@ internal sealed class GetUserActivityLogHandler : IQueryHandler<GetUserActivityL
         var userId = new UserId(query.UserId);
         var userActivityLogs = await _dbContext.ActivityLogs
             .AsNoTracking()
+            .Include(al => al.WorkoutPlan)
             .Where(al => al.UserId == userId)
             .Select(al => al.AsDto())
             .ToListAsync();

@@ -17,7 +17,8 @@ public static class Extensions
             entity.Date.Value,
             entity.ActivityType.Value,
             entity.Duration.Minutes,
-            entity.WorkoutPlanId?.Value );
+            entity.WorkoutPlanId?.Value,
+            entity.WorkoutPlan?.Name.Value);
     
     public static WorkoutPlanDto AsDto(this Core.Entities.WorkoutPlan entity)
         => new(

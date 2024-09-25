@@ -29,7 +29,7 @@ internal sealed class ActivityLogConfiguraion : IEntityTypeConfiguration<Activit
         builder.Property(al => al.WorkoutPlanId)
             .HasConversion(id => id.Value, value => new WorkoutPlanId(value));
 
-        builder.HasOne<WorkoutPlan>()
+        builder.HasOne(al => al.WorkoutPlan)
             .WithMany()
             .HasForeignKey(al => al.WorkoutPlanId)
             .IsRequired(false);

@@ -8,4 +8,5 @@ public class ActivityLogDto
     public string ActivityType { get; set; }
     public int Duration { get; set; }
     public Guid? WorkoutPlanId { get; set; }
+    public string? WorkoutPlanName { get; set; }
 }

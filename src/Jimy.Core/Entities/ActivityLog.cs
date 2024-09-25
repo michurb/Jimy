@@ -11,6 +11,7 @@ public class ActivityLog
     public ActivityType ActivityType { get; private set; }
     public Duration Duration { get; private set; }
     public WorkoutPlanId? WorkoutPlanId { get; private set; }
+    public WorkoutPlan? WorkoutPlan { get; private set; }
 
     private ActivityLog() {}
 
