@@ -5,7 +5,7 @@ namespace Jimy.Blazor.Pages.Account;
 
 public partial class SignUp : ComponentBase
 {
-    private SignUpDto signUpModel = new SignUpDto();
+    private SignUpDto signUpModel = new();
     private string errorMessage;
 
     private async Task HandleValidSubmit()

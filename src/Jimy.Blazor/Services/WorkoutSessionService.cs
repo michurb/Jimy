@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Jimy.Blazor.API.Interfaces;
+using Jimy.Blazor.Exceptions;
 using Jimy.Blazor.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
@@ -11,53 +12,42 @@ namespace Jimy.Blazor.Services;
 
 public class WorkoutSessionService : IWorkoutSessionService
 {
-    private readonly HttpClient _httpClient;
-    private readonly AuthenticationStateProvider _authProvider;
-    private readonly IJSRuntime _jsRuntime;
+    private readonly IBaseHttpClient _baseHttpClient;
 
-    public WorkoutSessionService(IHttpClientFactory httpClientFactory, AuthenticationStateProvider authProvider,
-        IJSRuntime jsRuntime)
+    public WorkoutSessionService(IBaseHttpClient baseHttpClient)
     {
-        _httpClient = httpClientFactory.CreateClient("MainApi");
-        _authProvider = authProvider;
-        _jsRuntime = jsRuntime;
+        _baseHttpClient = baseHttpClient;
     }
     
     public async Task<WorkoutSessionDto> GetSessionAsync(Guid sessionId)
     {
-        var response = await _httpClient.GetAsync($"api/workout-sessions/{sessionId}");
+        var client = await _baseHttpClient.GetClientAsync();
+        var response = await client.GetAsync($"api/workout-sessions/{sessionId}");
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<WorkoutSessionDto>();
     }
 
     public async Task UpdateExerciseWeight(Guid sessionId, Guid exerciseId, int setNumber, decimal weight)
     {
+        var client = await _baseHttpClient.GetClientAsync();
         var updateDto = new UpdateWorkoutSessionExerciseDto
         {
             SetNumber = setNumber,
             Weight = weight
         };
-        var response = await _httpClient.PostAsJsonAsync($"api/workout-sessions/{sessionId}/exercises/{exerciseId}/set/{setNumber}/weight", updateDto);
+        var response = await client.PostAsJsonAsync($"api/workout-sessions/{sessionId}/exercises/{exerciseId}/set/{setNumber}/weight", updateDto);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task<Guid> StartWorkoutSession(Guid workoutPlanId)
     {
-        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
-        
-        if (string.IsNullOrEmpty(token))
-        {
-            throw new UnauthorizedAccessException("No authentication token found.");
-        }
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+        var client = await _baseHttpClient.GetClientAsync();
         var startSessionDto = new StartWorkoutSessionDto
         {
             WorkoutPlanId = workoutPlanId
         };
 
-        var response = await _httpClient.PostAsJsonAsync("api/workout-sessions/start", startSessionDto);
+        var response = await client.PostAsJsonAsync("api/workout-sessions/start", startSessionDto);
         
         if (response.IsSuccessStatusCode)
         {
@@ -67,38 +57,22 @@ public class WorkoutSessionService : IWorkoutSessionService
 
         if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
-            throw new Exception("You already have an active workout session.");
+            throw new AlreadyStartedWrongWorkoutException();
         }
-        throw new Exception($"Failed to start workout session: {response.StatusCode}");
+        throw new CouldNotStartWorkoutSeesionException();
     }
     
     public async Task EndWorkoutSessionAsync(Guid sessionId)
     {
-        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
-        
-        if (string.IsNullOrEmpty(token))
-        {
-            throw new UnauthorizedAccessException("No authentication token found.");
-        }
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        var response = await _httpClient.PostAsync($"api/workout-sessions/{sessionId}/end", null);
+        var client = await _baseHttpClient.GetClientAsync();
+        var response = await client.PostAsync($"api/workout-sessions/{sessionId}/end", null);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task<WorkoutSessionDto> GetActiveWorkoutSessionAsync()
     {
-        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
-    
-        if (string.IsNullOrEmpty(token))
-        {
-            throw new UnauthorizedAccessException("No authentication token found.");
-        }
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-    
-        var response = await _httpClient.GetAsync("api/workout-sessions/active");
+        var client = await _baseHttpClient.GetClientAsync();
+        var response = await client.GetAsync("api/workout-sessions/active");
     
         if (response.IsSuccessStatusCode)
         {
@@ -115,6 +89,6 @@ public class WorkoutSessionService : IWorkoutSessionService
             return null;
         }
 
-        throw new Exception($"Failed to get active workout session: {response.StatusCode}");
+        throw new CouldNotGetActiveWorkoutSessionException();
     }
 }

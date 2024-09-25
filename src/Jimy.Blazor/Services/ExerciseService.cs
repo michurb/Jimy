@@ -6,17 +6,16 @@ namespace Jimy.Blazor.Services;
 
 public class ExerciseService : IExerciseService
 {
-    private readonly IHttpClientFactory _httpClient;
-    private readonly string _baseUrl;
+    private readonly IBaseHttpClient _baseHttpClient;
 
-    public ExerciseService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public ExerciseService(IBaseHttpClient baseHttpClient)
     {
-       _httpClient = httpClientFactory;
+        _baseHttpClient = baseHttpClient;
     }
 
     public async Task<List<ExerciseDto>> GetExercisesAsync()
     {
-        var client = _httpClient.CreateClient("MainApi");
+        var client = await _baseHttpClient.GetClientAsync();
         var response = await client.GetAsync("api/exercises");
         return await response.Content.ReadFromJsonAsync<List<ExerciseDto>>();
     }

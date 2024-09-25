@@ -1,9 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Blazored.LocalStorage;
+using Jimy.Blazor.API.Interfaces;
 
 namespace Jimy.Blazor.Services;
 
-public class BaseHttpClient
+public class BaseHttpClient : IBaseHttpClient
 {
     private readonly HttpClient _httpClient;
     private readonly ILocalStorageService _localStorage;

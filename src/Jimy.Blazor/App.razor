@@ -27,24 +27,3 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
-
-@code {
-    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthenticationStateTask;
-        if (authState?.User?.Identity is null || !authState.User.Identity.IsAuthenticated)
-        {
-            var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-                NavigationManager.NavigateTo("signin", true);
-            }
-            else
-            {
-                NavigationManager.NavigateTo($"signin?returnUrl={Uri.EscapeDataString(returnUrl)}", true);
-            }
-        }
-    }
-}

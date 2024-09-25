@@ -11,7 +11,6 @@ public partial class Dashboard : ComponentBase
 {
     [Inject] private IAuthService AuthService { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
-    [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] private IWorkoutSessionService WorkoutSessionService { get; set; }
 
     private UserDto currentUser;

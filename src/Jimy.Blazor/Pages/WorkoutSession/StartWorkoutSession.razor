@@ -1,24 +1,35 @@
 ﻿@page "/start-workout/{WorkoutPlanId:guid}"
 @using Jimy.Blazor.API.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Jimy.Blazor.Shared
 @inject IWorkoutSessionService WorkoutSessionService
 @inject NavigationManager NavigationManager
+@attribute [Authorize]
 
-<h3>Start Workout Session</h3>
+<AuthorizeView>
+    <Authorized>
+        <h3>Start Workout Session</h3>
 
-@if (isLoading)
-{
-    <p>Starting workout session...</p>
-}
-else if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger">
-        @errorMessage
-    </div>
-}
-else
-{
-    <button @onclick="StartWorkout" class="btn btn-primary">Start Workout</button>
-}
+        @if (isLoading)
+        {
+        <p>Starting workout session...</p>
+        }
+        else if (!string.IsNullOrEmpty(errorMessage))
+        {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+        }
+        else
+        {
+        <button @onclick="StartWorkout" class="btn btn-primary">Start Workout</button>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter] public Guid WorkoutPlanId { get; set; }

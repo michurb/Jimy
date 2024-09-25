@@ -1,27 +1,33 @@
 ﻿@page "/active-workout/{sessionId:guid}"
+@attribute [Authorize]
 @inject IWorkoutSessionService WorkoutSessionService
 @inject IWorkoutPlanService WorkoutPlanService
 @inject NavigationManager NavigationManager
 @using Jimy.Blazor.API.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Jimy.Blazor.Shared
 @implements IDisposable
 
-@if (IsFinished)
-{
-    <div class="flex flex-col items-center justify-center">
-        <h2 class="text-center text-2xl mb-4">The workout session is already finished.</h2>
-        <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" @onclick="GoToDashboard">Dashboard</button>
-    </div>
-}
-else
-{
-    <div class="flex justify-center items-center min-h-screen bg-gray-100">
-        <div class="container mx-auto px-4 py-8 max-w-3xl w-full">
-            @if (IsLoading)
-            {
+<AuthorizeView>
+    <Authorized>
+        @if (IsFinished)
+        {
+        <div class="flex flex-col items-center justify-center">
+            <h2 class="text-center text-2xl mb-4">The workout session is already finished.</h2>
+            <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" @onclick="GoToDashboard">Dashboard</button>
+        </div>
+        }
+        else
+        {
+        <div class="flex justify-center items-center min-h-screen bg-gray-100">
+            <div class="container mx-auto px-4 py-8 max-w-3xl w-full">
+                @if (IsLoading)
+                {
                 <p class="text-gray-600 text-center">Loading workout session details...</p>
-            }
-            else if (WorkoutSession != null)
-            {
+                }
+                else if (WorkoutSession != null)
+                {
                 <div class="bg-white shadow-md rounded-lg p-6">
                     <h3 class="text-2xl font-semibold text-center mb-4">@WorkoutPlanName.Name</h3>
 
@@ -32,23 +38,23 @@ else
 
                     @foreach (var exercise in WorkoutSession.Exercises)
                     {
-                        <div class="mb-6 border-b pb-4">
-                            <h4 class="text-lg font-semibold mb-2 text-center">@exercise.Name</h4>
-                            @foreach (var set in exercise.SetDetails)
-                            {
-                                <div class="flex flex-wrap justify-center items-center mb-2">
-                                    <span class="w-20 mr-2 text-center">Set @set.SetNumber:</span>
-                                    <span class="w-20 mr-2 text-center">@exercise.Reps reps</span>
-                                    <div class="flex items-center">
-                                        <input type="number"
-                                               value="@set.Weight"
-                                               @onchange="e => UpdateWeight(exercise.Id, set.SetNumber, decimal.Parse(e.Value.ToString()))"
-                                               class="w-20 px-2 py-1 border rounded-md mr-2 text-center"/>
-                                        <span>kg</span>
-                                    </div>
-                                </div>
-                            }
+                    <div class="mb-6 border-b pb-4">
+                        <h4 class="text-lg font-semibold mb-2 text-center">@exercise.Name</h4>
+                        @foreach (var set in exercise.SetDetails)
+                        {
+                        <div class="flex flex-wrap justify-center items-center mb-2">
+                            <span class="w-20 mr-2 text-center">Set @set.SetNumber:</span>
+                            <span class="w-20 mr-2 text-center">@exercise.Reps reps</span>
+                            <div class="flex items-center">
+                                <input type="number"
+                                       value="@set.Weight"
+                                       @onchange="e => UpdateWeight(exercise.Id, set.SetNumber, decimal.Parse(e.Value.ToString()))"
+                                       class="w-20 px-2 py-1 border rounded-md mr-2 text-center"/>
+                                <span>kg</span>
+                            </div>
                         </div>
+                        }
+                    </div>
                     }
 
                     <div class="text-center mt-6">
@@ -57,10 +63,15 @@ else
                         </button>
                     </div>
                 </div>
-            }
+                }
+            </div>
         </div>
-    </div>
-}
+        }
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code {

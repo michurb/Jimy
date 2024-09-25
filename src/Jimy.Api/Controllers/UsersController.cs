@@ -92,4 +92,10 @@ public class UsersController : ControllerBase
         var jwt = _tokenStorage.Get();
         return Ok(jwt);
     }
+    
+    // public async Task<ActionResult> Post(SignOut command)
+    // {
+    //     await _signInHandler.HandleAsync(command);
+    //     return Ok();
+    // }
 }

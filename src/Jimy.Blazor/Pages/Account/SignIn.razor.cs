@@ -10,10 +10,9 @@ public partial class SignIn : ComponentBase
 {
     [Inject] private IAuthService AuthService { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
-    [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-    private SignInDto signInModel = new SignInDto();
+    private SignInDto signInModel = new();
     private string errorMessage = string.Empty;
     private string returnUrl = string.Empty;
 
@@ -31,7 +30,6 @@ public partial class SignIn : ComponentBase
             var response = await AuthService.SignInAsync(signInModel);
             if (!string.IsNullOrEmpty(response.AccessToken))
             {
-                await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", response.AccessToken);
                 await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 NavigationManager.NavigateTo(string.IsNullOrEmpty(returnUrl) ? "/dashboard" : returnUrl);
             }
