@@ -1,6 +1,7 @@
 ﻿@page "/dashboard"
 @layout UserLayout
 @attribute [Authorize]
+@using System.ComponentModel.Design
 @using Jimy.Blazor.Pages.WorkoutPlan
 @using Jimy.Blazor.Shared
 @using Microsoft.AspNetCore.Authorization
@@ -72,6 +73,26 @@
                     <p>No user data available.</p>
                 }
             </div>
+            @if (recentSessions != null && recentSessions.Any())
+            {
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-4">Recent Workout Sessions</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach (var session in recentSessions)
+                    {
+                    <div class="bg-white shadow-md rounded-lg p-4">
+                        <h4 class="font-semibold mb-2">@session.StartTime.ToString("g")</h4>
+                        <p>Duration: @((session.EndTime - session.StartTime)?.ToString(@"hh\:mm\:ss"))</p>
+                        <p>Exercises: @session.Exercises.Count()</p>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            else
+            {
+                <h2 class="text-center "> No recent workout sessions found.</h2>
+            }
         </main>
     </Authorized>
     <NotAuthorized>

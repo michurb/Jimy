@@ -20,6 +20,7 @@ public class WorkoutSessionsController : ControllerBase
     private readonly IQueryHandler<GetUsersWorkoutSession, IEnumerable<WorkoutSessionDto>> _getUsersWorkoutSessionHandler;
     private readonly IQueryHandler<GetUserActiveWorkoutSession, WorkoutSessionDto> _getUserActiveWorkoutSessionHandler;
     private readonly ICommandHandler<UpdateWorkoutSessionExerciseWeight> _updateWorkoutSessionExerciseWeightHandler;
+    private readonly IQueryHandler<GetRecentWorkoutSessions, IEnumerable<WorkoutSessionDto>> _getUserRecentWorkoutSessionsHandler;
 
     public WorkoutSessionsController(
         ICommandHandler<StartWorkoutSession> startWorkoutSessionHandler,
@@ -27,7 +28,8 @@ public class WorkoutSessionsController : ControllerBase
         ICommandHandler<UpdateWorkoutSessionExerciseWeight> updateWorkoutSessionExerciseWeightHandler,
         IQueryHandler<GetWorkoutSession, WorkoutSessionDto> getWorkoutSessionHandler,
         IQueryHandler<GetUsersWorkoutSession, IEnumerable<WorkoutSessionDto>> getUsersWorkoutSessionHandler,
-        IQueryHandler<GetUserActiveWorkoutSession, WorkoutSessionDto> getUserActiveWorkoutSessionHandler)
+        IQueryHandler<GetUserActiveWorkoutSession, WorkoutSessionDto> getUserActiveWorkoutSessionHandler,
+        IQueryHandler<GetRecentWorkoutSessions, IEnumerable<WorkoutSessionDto>> getUserRecentWorkoutSessionsHandler)
     {
         _startWorkoutSessionHandler = startWorkoutSessionHandler;
         _endWorkoutSessionHandler = endWorkoutSessionHandler;
@@ -35,6 +37,7 @@ public class WorkoutSessionsController : ControllerBase
         _getUsersWorkoutSessionHandler = getUsersWorkoutSessionHandler;
         _updateWorkoutSessionExerciseWeightHandler = updateWorkoutSessionExerciseWeightHandler;
         _getUserActiveWorkoutSessionHandler = getUserActiveWorkoutSessionHandler;
+        _getUserRecentWorkoutSessionsHandler = getUserRecentWorkoutSessionsHandler;
     }
 
     [Authorize]
@@ -48,6 +51,16 @@ public class WorkoutSessionsController : ControllerBase
     public async Task<ActionResult<WorkoutSessionDto>> Get(Guid id)
     {
         var result = await _getWorkoutSessionHandler.HandleAsync(new GetWorkoutSession { WorkoutSessionId = id });
+        return Ok(result);
+    }
+    
+    [Authorize]
+    [HttpGet("recent")]
+    public async Task<ActionResult<IEnumerable<WorkoutSessionDto>>> GetRecentSessions([FromQuery] int count = 5)
+    {
+        var userId = Guid.Parse(User.Identity.Name);
+        var query = new GetRecentWorkoutSessions { UserId = userId, Count = count };
+        var result = await _getUserRecentWorkoutSessionsHandler.HandleAsync(query);
         return Ok(result);
     }
 

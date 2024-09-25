@@ -4,7 +4,7 @@ using Jimy.Blazor.API.Interfaces;
 
 namespace Jimy.Blazor.Services;
 
-public class BaseHttpClient : IBaseHttpClient
+internal sealed class BaseHttpClient : IBaseHttpClient
 {
     private readonly HttpClient _httpClient;
     private readonly ILocalStorageService _localStorage;

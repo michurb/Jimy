@@ -9,4 +9,5 @@ public interface IWorkoutSessionService
     Task<Guid> StartWorkoutSession(Guid workoutPlanId);
     Task EndWorkoutSessionAsync(Guid sessionId);
     Task<WorkoutSessionDto> GetActiveWorkoutSessionAsync();
+    Task<IEnumerable<WorkoutSessionDto>> GetRecentWorkoutSessionsAsync(int count);
 }

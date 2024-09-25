@@ -12,6 +12,7 @@ public partial class Dashboard : ComponentBase
     [Inject] private IAuthService AuthService { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }
     [Inject] private IWorkoutSessionService WorkoutSessionService { get; set; }
+    private IEnumerable<WorkoutSessionDto> recentSessions;
 
     private UserDto currentUser;
     private string errorMessage;
@@ -23,6 +24,7 @@ public partial class Dashboard : ComponentBase
     {
         await LoadUserData();
         await CheckActiveWorkoutSession();
+        await LoadRecentSessions();
     }
 
     private async Task LoadUserData()
@@ -81,6 +83,18 @@ public partial class Dashboard : ComponentBase
     {
         showCreateWorkoutPlanModal = false;
         StateHasChanged();
+    }
+    
+    private async Task LoadRecentSessions()
+    {
+        try
+        {
+            recentSessions = await WorkoutSessionService.GetRecentWorkoutSessionsAsync(5);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading recent sessions: {ex.Message}";
+        }
     }
 
     private async Task HandleWorkoutPlanCreated()
