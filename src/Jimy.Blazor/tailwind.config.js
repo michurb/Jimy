@@ -1,11 +1,8 @@
 module.exports = {
   content: [
-    './**/*.html',
     './**/*.razor',
+    './**/*.html',
     './**/*.cshtml',
-    './**/*.razor.cs',
-    './**/*.js',
-    './**/*.cs'
   ],
   theme: {
     extend: {},

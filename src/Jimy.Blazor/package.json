@@ -5,7 +5,7 @@
     "css:build": "tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/app.min.css --minify"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.10"
+    "tailwindcss": "^3.4.13"
   },
   "dependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.2",
