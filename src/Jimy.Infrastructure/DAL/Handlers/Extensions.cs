@@ -6,11 +6,11 @@ namespace Jimy.Infrastructure.DAL.Handlers;
 public static class Extensions
 {
     public static UserDto AsDto(this User entity)
-        => new(entity.Id.Value, entity.Username.Value, entity.Username.Value, entity.CreatedAt);
+        => new(entity.Id.Value, entity.Username.Value, entity.Username.Value, entity.CreatedAt, entity.Role);
 
     public static ExerciseDto AsDto(this Core.Entities.Exercise entity)
         => new(entity.Id.Value, entity.Name.Value, entity.Description.Value);
-    
+
     public static ActivityLogDto AsDto(this Core.Entities.ActivityLog entity)
         => new(entity.Id.Value,
             entity.UserId.Value,
@@ -19,7 +19,7 @@ public static class Extensions
             entity.Duration.Minutes,
             entity.WorkoutPlanId?.Value,
             entity.WorkoutPlan?.Name.Value);
-    
+
     public static WorkoutPlanDto AsDto(this Core.Entities.WorkoutPlan entity)
         => new(
             entity.Id.Value,
@@ -33,7 +33,7 @@ public static class Extensions
             x.Sets.Value,
             x.Reps.Value
         )));
-    
+
     public static WorkoutSessionDto AsDto(this Core.Entities.WorkoutSession entity)
         => new(
             entity.Id.Value,

@@ -8,4 +8,5 @@ public interface IAuthService
     Task<AuthResponseDto> SignUpAsync(SignUpDto signUpDto);
     Task<UserDto> GetCurrentUserAsync();
     Task SignOutAsync();
+    Task<bool> IsAdminAsync();
 }

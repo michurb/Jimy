@@ -3,6 +3,7 @@ using Jimy.Blazor;
 using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Auth;
 using Jimy.Blazor.Services;
+using Jimy.Blazor.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -35,6 +36,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
 builder.Services.AddScoped<ApiAuthenticationStateProvider>();
 builder.Services.AddScoped<IBaseHttpClient, BaseHttpClient>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 
 

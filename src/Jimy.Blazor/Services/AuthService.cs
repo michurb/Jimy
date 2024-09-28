@@ -80,4 +80,10 @@ public class AuthService : IAuthService
         await _localStorage.RemoveItemAsync("authToken");
         await ((ApiAuthenticationStateProvider)_authStateProvider).MarkUserAsLoggedOut();
     }
+
+    public async Task<bool> IsAdminAsync()
+    {
+      var user = await GetCurrentUserAsync();
+      return user.Role == "admin";
+    }
 }

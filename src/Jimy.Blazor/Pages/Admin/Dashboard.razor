@@ -1,0 +1,45 @@
+﻿@page "/admin/dashboard"
+@using Jimy.Blazor.Services.Interfaces
+@using Jimy.Blazor.Shared
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "admin")]
+@layout AdminLayout
+@inject IAdminService AdminService
+
+<h1 class="text-2xl font-semibold mb-4">Admin Dashboard</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div class="bg-white shadow rounded-lg p-4">
+    <h2 class="text-lg font-semibold mb-2">Total Users</h2>
+    <p class="text-3xl font-bold">@totalUsers</p>
+  </div>
+  <div class="bg-white shadow rounded-lg p-4">
+    <h2 class="text-lg font-semibold mb-2">Total Workout Plans</h2>
+    <p class="text-3xl font-bold">@totalWorkoutPlans</p>
+  </div>
+  <div class="bg-white shadow rounded-lg p-4">
+    <h2 class="text-lg font-semibold mb-2">Total Exercises</h2>
+    <p class="text-3xl font-bold">@totalExercises</p>
+  </div>
+</div>
+
+@code {
+  private int totalUsers;
+  private int totalWorkoutPlans;
+  private int totalExercises;
+
+  protected override async Task OnInitializedAsync()
+  {
+
+    await LoadData();
+  }
+  
+  private async Task LoadData()
+  {
+    var data = await AdminService.GetDashboardDataAsync();
+    totalUsers = data.TotalUsers;
+    totalWorkoutPlans = data.TotalWorkoutPlans;
+    totalExercises = data.TotalExercises;
+  }
+  
+}
