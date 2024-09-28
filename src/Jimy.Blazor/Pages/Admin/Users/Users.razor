@@ -1,0 +1,151 @@
+﻿@page "/admin/users"
+@using Jimy.Blazor.Services.Interfaces
+@using Jimy.Blazor.Shared
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "admin")]
+@inject IAdminService AdminService
+@inject NavigationManager NavigationManager
+@layout AdminLayout
+
+<h2 class="text-2xl font-semibold mb-4">User Management</h2>
+
+@if (users == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="mb-4">
+        <button @onclick="OpenCreateUserModal" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Create User
+        </button>
+    </div>
+
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b">ID</th>
+                <th class="py-2 px-4 border-b">Username</th>
+                <th class="py-2 px-4 border-b">Email</th>
+                <th class="py-2 px-4 border-b">Role</th>
+                <th class="py-2 px-4 border-b">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td class="py-2 px-4 border-b">@user.Id</td>
+                    <td class="py-2 px-4 border-b">@user.Username</td>
+                    <td class="py-2 px-4 border-b">@user.Email</td>
+                    <td class="py-2 px-4 border-b">@user.Role</td>
+                    <td class="py-2 px-4 border-b">
+                        <button @onclick="() => OpenEditUserModal(user)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">
+                            Edit
+                        </button>
+                        <button @onclick="() => OpenDeleteConfirmation(user.Id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (showCreateUserModal)
+{
+    <CreateUser OnClose="CloseCreateUserModal" OnUserCreated="HandleUserCreated" />
+}
+
+@if (showEditUserModal)
+{
+    <EditUser User="selectedUser" OnClose="CloseEditUserModal" OnUserUpdated="HandleUserUpdated" />
+}
+
+@if (showDeleteConfirmation)
+{
+    <ConfirmationModal
+        Title="Confirm Delete"
+        Message="Are you sure you want to delete this user?"
+        OnConfirm="ConfirmDeleteUser"
+        OnCancel="CancelDeleteUser" />
+}
+
+@code {
+    private List<UserDto> users;
+    private bool showCreateUserModal;
+    private bool showEditUserModal;
+    private bool showDeleteConfirmation;
+    private UserDto selectedUser;
+    private Guid userIdToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        users = (await AdminService.GetUsersAsync()).ToList();
+    }
+
+    private void OpenCreateUserModal()
+    {
+        showCreateUserModal = true;
+        StateHasChanged();
+    }
+
+    private void CloseCreateUserModal()
+    {
+        showCreateUserModal = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleUserCreated()
+    {
+        CloseCreateUserModal();
+        await LoadUsers();
+    }
+
+    private void OpenEditUserModal(UserDto user)
+    {
+        selectedUser = user;
+        showEditUserModal = true;
+        StateHasChanged();
+    }
+
+    private void CloseEditUserModal()
+    {
+        showEditUserModal = false;
+        selectedUser = null;
+        StateHasChanged();
+    }
+
+    private async Task HandleUserUpdated()
+    {
+        CloseEditUserModal();
+        await LoadUsers();
+    }
+
+    private void OpenDeleteConfirmation(Guid userId)
+    {
+        userIdToDelete = userId;
+        showDeleteConfirmation = true;
+        StateHasChanged();
+    }
+
+    private async Task ConfirmDeleteUser()
+    {
+        await AdminService.DeleteUserAsync(userIdToDelete);
+        showDeleteConfirmation = false;
+        await LoadUsers();
+    }
+
+    private void CancelDeleteUser()
+    {
+        showDeleteConfirmation = false;
+        userIdToDelete = Guid.Empty;
+        StateHasChanged();
+    }
+}

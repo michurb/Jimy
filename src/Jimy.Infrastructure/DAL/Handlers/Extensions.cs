@@ -6,7 +6,7 @@ namespace Jimy.Infrastructure.DAL.Handlers;
 public static class Extensions
 {
     public static UserDto AsDto(this User entity)
-        => new(entity.Id.Value, entity.Username.Value, entity.Username.Value, entity.CreatedAt, entity.Role);
+        => new(entity.Id.Value, entity.Username.Value, entity.Email.Value, entity.CreatedAt, entity.Role);
 
     public static ExerciseDto AsDto(this Core.Entities.Exercise entity)
         => new(entity.Id.Value, entity.Name.Value, entity.Description.Value);

@@ -47,5 +47,22 @@ internal sealed class AdminService : IAdminService
     var response = await client.GetAsync("api/admin/dashboard");
     return await response.Content.ReadFromJsonAsync<DashboardData>();
   }
-  
+
+  public async Task CreateUserAsync(CreateUserDto createUserDto)
+  {
+    var client = await _baseHttpClient.GetClientAsync();
+    var response = await client.PostAsJsonAsync("api/users", createUserDto);
+  }
+
+  public async Task UpdateUserAsync(EditUserDto editUserDto)
+  {
+    var client = await _baseHttpClient.GetClientAsync();
+    var response = await client.PutAsJsonAsync($"api/users/{editUserDto.Id}", editUserDto);
+  }
+
+  public async Task DeleteUserAsync(Guid userId)
+  {
+    var client = await _baseHttpClient.GetClientAsync();
+    var response = await client.DeleteAsync($"api/users/{userId}");
+  }
 }

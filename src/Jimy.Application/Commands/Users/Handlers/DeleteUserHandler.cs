@@ -16,6 +16,5 @@ public sealed class DeleteUserHandler(IUserRepository userRepository) : ICommand
             throw new UserNotFoundException(command.Id);
         }
         await userRepository.DeleteAsync(userId);
-        await userRepository.UpdateAsync(user);
     }
 }

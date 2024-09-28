@@ -18,18 +18,24 @@ public class UsersController : ControllerBase
     private readonly ICommandHandler<SignUp> _createUserHandler;
     private readonly ITokenStorage _tokenStorage;
     private readonly ICommandHandler<SignIn> _signInHandler;
+    private readonly ICommandHandler<UpdateUser> _updateUserHandler;
+    private readonly ICommandHandler<DeleteUser> _deleteUserHandler;
 
     public UsersController(
         IQueryHandler<GetUsers, IEnumerable<UserDto>> getUsersHandler,
         IQueryHandler<GetUser, UserDto> getUserHandler,
         ICommandHandler<SignUp> createUserHandler,
         ICommandHandler<SignIn> signInHandler,
+        ICommandHandler<UpdateUser> updateUserHandler,
+        ICommandHandler<DeleteUser> deleteUserHandler,
         ITokenStorage tokenStorage)
     {
         _getUsersHandler = getUsersHandler;
         _getUserHandler = getUserHandler;
         _createUserHandler = createUserHandler;
         _signInHandler = signInHandler;
+        _updateUserHandler = updateUserHandler;
+        _deleteUserHandler = deleteUserHandler;
         _tokenStorage = tokenStorage;
     }
 
@@ -81,7 +87,7 @@ public class UsersController : ControllerBase
         await _createUserHandler.HandleAsync(command);
         return CreatedAtAction(nameof(Get), new { userId = command.UserId }, null);
     }
-    
+
     [HttpPost("sign-in")]
     [SwaggerOperation("Sign in the user and return the JSON Web Token")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -91,5 +97,32 @@ public class UsersController : ControllerBase
         await _signInHandler.HandleAsync(command);
         var jwt = _tokenStorage.Get();
         return Ok(jwt);
+    }
+
+    [HttpPut("{userId:guid}")]
+    [SwaggerOperation("Update an existing user")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Policy = "is-admin")]
+    public async Task<ActionResult> Put(Guid userId, UpdateUser command)
+    {
+        if (userId != command.Id)
+        {
+            return BadRequest();
+        }
+        await _updateUserHandler.HandleAsync(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{userId:guid}")]
+    [SwaggerOperation("Delete an existing user")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize(Policy = "is-admin")]
+    public async Task<ActionResult> Delete(Guid userId)
+    {
+        await _deleteUserHandler.HandleAsync(new DeleteUser(userId));
+        return NoContent();
     }
 }
