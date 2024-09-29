@@ -12,7 +12,7 @@ namespace Jimy.Infrastructure.DAL;
 internal static class Extensions
 {
     private const string OptionsSectionName = "sqlserver";
-    
+
     public static IServiceCollection AddSqlServer(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<SqlServerOptions>(configuration.GetRequiredSection(OptionsSectionName));
@@ -24,8 +24,9 @@ internal static class Extensions
         services.AddScoped<IActivityLogRepository, SqlServerActivityLogRepository>();
         services.AddScoped<IWorkoutSessionRepository, SqlServerWorkoutSessionRepository>();
         services.AddScoped<IUnitOfWork, SqlServerUnitOfWork>();
+        services.AddHostedService<DatabaseInitializer>();
         services.TryDecorate(typeof(ICommandHandler<>), typeof(UnitOfWorkCommandHandlerDecorator<>));
-        
+
         return services;
     }
 }
