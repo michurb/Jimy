@@ -1,8 +1,11 @@
 ﻿using Jimy.Blazor.Models;
 
-namespace Jimy.Blazor.API.Interfaces;
+namespace Jimy.Blazor.Services.Interfaces;
 
 public interface IExerciseService
 {
-    Task<List<ExerciseDto>> GetExercisesAsync();
+    Task<IEnumerable<ExerciseDto>> GetExercisesAsync();
+    Task CreateExerciseAsync(CreateExerciseDto createExerciseDto);
+    Task UpdateExerciseAsync(EditExerciseDto editExerciseDto);
+    Task DeleteExerciseAsync(Guid exerciseId);
 }

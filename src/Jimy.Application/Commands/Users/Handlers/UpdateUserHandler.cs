@@ -14,7 +14,9 @@ public sealed class UpdateUserHandler(IUserRepository userRepository) : ICommand
         {
             throw new UserNotFoundException(command.Id);
         }
-        user.UpdateDetails(new Username(command.Username), new Email(command.Email));
+
+        var role = new Role(command.Role);
+        user.UpdateDetails(new Username(command.Username), new Email(command.Email), role);
         await userRepository.UpdateAsync(user);
     }
 }

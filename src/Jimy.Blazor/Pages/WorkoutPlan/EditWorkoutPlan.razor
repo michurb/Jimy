@@ -1,4 +1,5 @@
 ﻿@using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Services.Interfaces
 @inject IWorkoutPlanService WorkoutPlanService
 @inject IExerciseService ExerciseService
 @inject IAuthService AuthService
@@ -72,7 +73,7 @@
     [Parameter] public EventCallback OnPlanUpdated { get; set; }
 
     private WorkoutPlanDto workoutPlan;
-    private List<ExerciseDto> availableExercises = new();
+    private IEnumerable<ExerciseDto> availableExercises;
     private bool showErrorPopup = false;
     private string errorMessage = "";
 

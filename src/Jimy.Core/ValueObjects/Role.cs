@@ -18,11 +18,11 @@ public sealed record Role
         Value = value;
     }
 
-    public static Role User() => new Role("user");
-    public static Role Admin() => new Role("admin");
-    public static implicit operator Role(string value) => new Role(value);
+    public static Role User() => new("user");
+    public static Role Admin() => new("admin");
+    public static implicit operator Role(string value) => new(value);
 
     public static implicit operator string(Role value) => value?.Value;
-    
+
     public override string ToString() => Value;
 }

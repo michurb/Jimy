@@ -1,6 +1,7 @@
 ﻿@page "/exercises"
 @attribute [Authorize]
 @using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Services.Interfaces
 @using Jimy.Blazor.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
@@ -30,7 +31,7 @@
 </AuthorizeView>
 
 @code {
-    private List<ExerciseDto> exercises;
+    private IEnumerable<ExerciseDto> exercises;
 
     protected override async Task OnInitializedAsync()
     {

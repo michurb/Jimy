@@ -21,8 +21,7 @@ public class DatabaseInitializer : IHostedService
         var dbContext = scope.ServiceProvider.GetRequiredService<JimyDbContext>();
         await dbContext.Database.MigrateAsync(cancellationToken);
 
-        if (await dbContext.Exercises.
-                AnyAsync(cancellationToken))
+        if (await dbContext.Exercises.AnyAsync(cancellationToken))
         {
             return;
         }
@@ -248,7 +247,18 @@ public class DatabaseInitializer : IHostedService
                 new ExerciseDescription("A combination of a squat and overhead press."))
         };
 
+        var users = new List<User>
+        {
+            new(new UserId(Guid.Parse("00000000-0000-0000-0000-000000000001")),
+                new Email("admin@jimy.io"),
+                new Username("admin"),
+                new Password("admin123"),
+                Role.Admin(),
+                DateTime.UtcNow),
+        };
+
         await dbContext.Exercises.AddRangeAsync(exercises, cancellationToken);
+        await dbContext.Users.AddRangeAsync(users, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 

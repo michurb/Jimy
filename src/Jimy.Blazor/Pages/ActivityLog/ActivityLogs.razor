@@ -1,6 +1,7 @@
 ﻿@page "/activity-logs"
 @attribute [Authorize]
 @using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Services.Interfaces
 @using Jimy.Blazor.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
@@ -20,7 +21,7 @@
             {
                 <p>Loading...</p>
             }
-            else if (activityLogs.Count == 0)
+            else if (!activityLogs.Any())
             {
                 <p>No activity logs found.</p>
             }
@@ -76,7 +77,7 @@
 }
 
 @code {
-    private List<ActivityLogDto> activityLogs;
+    private IEnumerable<ActivityLogDto> activityLogs;
     private bool showCreateActivityLogModal = false;
     private bool showEditActivityLogModal = false;
     private ActivityLogDto selectedActivityLog;

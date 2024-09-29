@@ -23,10 +23,11 @@ public class User
         CreatedAt = createdAt;
     }
 
-    public void UpdateDetails(Username username, Email email)
+    public void UpdateDetails(Username username, Email email, Role role)
     {
         Username = username;
         Email = email;
+        Role = role;
     }
 
     public void ChangePassword(Password newPassword)

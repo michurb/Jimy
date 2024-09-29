@@ -5,6 +5,7 @@ using System.Text.Json;
 using Blazored.LocalStorage;
 using Jimy.Blazor.Exceptions;
 using Jimy.Blazor.Models;
+using Jimy.Blazor.Services.Interfaces;
 using Microsoft.JSInterop;
 
 namespace Jimy.Blazor.API.Interfaces;
@@ -28,7 +29,7 @@ public class WorkoutPlanService : IWorkoutPlanService
         }
     }
 
-    public async Task<List<WorkoutPlanDto>> GetUserWorkoutPlansAsync()
+    public async Task<IEnumerable<WorkoutPlanDto>> GetUserWorkoutPlansAsync()
     {
         var client = await _baseHttpClient.GetClientAsync();
         var response = await client.GetAsync("/api/workout-plans/user");
@@ -67,6 +68,18 @@ public class WorkoutPlanService : IWorkoutPlanService
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<WorkoutPlanDto>();
+        }
+
+        throw new CouldNotFindWorkoutPlanException();
+    }
+
+    public async Task<IEnumerable<WorkoutPlanDto>> GetAllWorkoutPlansAsync()
+    {
+        var client = await _baseHttpClient.GetClientAsync();
+        var response = await client.GetAsync("api/workout-plans");
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<List<WorkoutPlanDto>>();
         }
 
         throw new CouldNotFindWorkoutPlanException();

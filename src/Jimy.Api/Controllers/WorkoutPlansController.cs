@@ -12,10 +12,11 @@ namespace Jimy.Api.Controllers;
 [Route("api/workout-plans")]
 public class WorkoutPlansController : ControllerBase
 {
-     private readonly ICommandHandler<CreateWorkoutPlan> _createWorkoutPlanHandler;
+    private readonly ICommandHandler<CreateWorkoutPlan> _createWorkoutPlanHandler;
     private readonly ICommandHandler<UpdateWorkoutPlan> _updateWorkoutPlanHandler;
     private readonly ICommandHandler<DeleteWorkoutPlan> _deleteWorkoutPlanHandler;
     private readonly IQueryHandler<GetWorkoutPlan, WorkoutPlanDto> _getWorkoutPlanHandler;
+    private readonly IQueryHandler<GetAllWorkoutPlans, IEnumerable<WorkoutPlanDto>> _getAllWorkoutPlansHandler;
     private readonly IQueryHandler<GetUsersWorkoutPlans, IEnumerable<WorkoutPlanDto>> _getUsersWorkoutPlansHandler;
 
     public WorkoutPlansController(
@@ -23,13 +24,25 @@ public class WorkoutPlansController : ControllerBase
         ICommandHandler<UpdateWorkoutPlan> updateWorkoutPlanHandler,
         ICommandHandler<DeleteWorkoutPlan> deleteWorkoutPlanHandler,
         IQueryHandler<GetWorkoutPlan, WorkoutPlanDto> getWorkoutPlanHandler,
-        IQueryHandler<GetUsersWorkoutPlans, IEnumerable<WorkoutPlanDto>> getUsersWorkoutPlansHandler)
+        IQueryHandler<GetUsersWorkoutPlans, IEnumerable<WorkoutPlanDto>> getUsersWorkoutPlansHandler,
+        IQueryHandler<GetAllWorkoutPlans, IEnumerable<WorkoutPlanDto>> getAllWorkoutPlansHandler)
     {
         _createWorkoutPlanHandler = createWorkoutPlanHandler;
         _updateWorkoutPlanHandler = updateWorkoutPlanHandler;
         _deleteWorkoutPlanHandler = deleteWorkoutPlanHandler;
         _getWorkoutPlanHandler = getWorkoutPlanHandler;
         _getUsersWorkoutPlansHandler = getUsersWorkoutPlansHandler;
+        _getAllWorkoutPlansHandler = getAllWorkoutPlansHandler;
+    }
+
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(Summary = "Get all workout plans")]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<WorkoutPlanDto>>> GetAll()
+    {
+        var result = await _getAllWorkoutPlansHandler.HandleAsync(new GetAllWorkoutPlans());
+        return Ok(result);
     }
 
     [Authorize]

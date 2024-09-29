@@ -1,6 +1,6 @@
 ﻿using Jimy.Blazor.Models;
 
-namespace Jimy.Blazor.API.Interfaces;
+namespace Jimy.Blazor.Services.Interfaces;
 
 public interface IAuthService
 {

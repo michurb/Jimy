@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using Blazored.LocalStorage;
 using Jimy.Blazor.API.Interfaces;
+using Jimy.Blazor.Services.Interfaces;
 
 namespace Jimy.Blazor.Services;
 

@@ -4,6 +4,7 @@ using Blazored.LocalStorage;
 using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Exceptions;
 using Jimy.Blazor.Models;
+using Jimy.Blazor.Services.Interfaces;
 using Microsoft.JSInterop;
 
 namespace Jimy.Blazor.Services;
@@ -17,7 +18,7 @@ public class ActivityLogService : IActivityLogService
         _baseHttpClient = baseHttpClient;
     }
 
-    public async Task<List<ActivityLogDto>> GetUserActivityLogsAsync()
+    public async Task<IEnumerable<ActivityLogDto>> GetUserActivityLogsAsync()
     {
         var client = await _baseHttpClient.GetClientAsync();
         var response = await client.GetAsync($"api/activity-logs/user");

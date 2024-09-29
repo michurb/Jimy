@@ -50,7 +50,7 @@
   [Parameter] public EventCallback OnClose { get; set; }
   [Parameter] public EventCallback OnUserCreated { get; set; }
 
-  private CreateUserDto createUserDto = new();
+  private CreateUserDto createUserDto = new CreateUserDto(){Role = "user"};
 
   private async Task AddUser()
   {

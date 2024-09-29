@@ -1,5 +1,6 @@
 ﻿using Jimy.Blazor.API.Interfaces;
 using Jimy.Blazor.Models;
+using Jimy.Blazor.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;

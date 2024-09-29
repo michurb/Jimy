@@ -1,0 +1,45 @@
+﻿@using Jimy.Blazor.Services.Interfaces
+@inject IExerciseService ExerciseService
+
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" id="create-exercise-modal">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Create Exercise</h3>
+        <EditForm Model="@createExerciseDto" OnValidSubmit="AddExercise">
+            <DataAnnotationsValidator />
+
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                <InputText id="name" @bind-Value="createExerciseDto.Name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
+                <ValidationMessage For="@(() => createExerciseDto.Name)" />
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <InputTextArea id="description" @bind-Value="createExerciseDto.Description" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" />
+                <ValidationMessage For="@(() => createExerciseDto.Description)" />
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                    Create
+                </button>
+                <button @onclick="OnClose" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                    Cancel
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnExerciseCreated { get; set; }
+
+    private CreateExerciseDto createExerciseDto = new();
+
+    private async Task AddExercise()
+    {
+        await ExerciseService.CreateExerciseAsync(createExerciseDto);
+        await OnExerciseCreated.InvokeAsync();
+    }
+}

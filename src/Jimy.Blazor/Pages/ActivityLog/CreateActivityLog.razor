@@ -1,4 +1,5 @@
 ﻿@using Jimy.Blazor.API.Interfaces
+@using Jimy.Blazor.Services.Interfaces
 @using Jimy.Blazor.Shared
 @layout UserLayout
 @inject IActivityLogService ActivityLogService
@@ -47,7 +48,7 @@
     [Parameter] public EventCallback OnActivityLogCreated { get; set; }
 
     private CreateActivityLogDto activityLog = new();
-    private List<WorkoutPlanDto> workoutPlans = new();
+    private IEnumerable<WorkoutPlanDto> workoutPlans;
     private UserDto currentUser;
 
     protected override async Task OnInitializedAsync()
