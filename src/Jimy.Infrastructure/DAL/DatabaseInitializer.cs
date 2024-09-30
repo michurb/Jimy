@@ -1,4 +1,5 @@
-﻿using Jimy.Core.Entities;
+﻿using Jimy.Application.Security;
+using Jimy.Core.Entities;
 using Jimy.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,10 +10,12 @@ namespace Jimy.Infrastructure.DAL;
 public class DatabaseInitializer : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IPasswordManager _passwordManager;
 
-    public DatabaseInitializer(IServiceProvider serviceProvider)
+    public DatabaseInitializer(IServiceProvider serviceProvider, IPasswordManager passwordManager)
     {
         _serviceProvider = serviceProvider;
+        _passwordManager = passwordManager;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -21,7 +24,7 @@ public class DatabaseInitializer : IHostedService
         var dbContext = scope.ServiceProvider.GetRequiredService<JimyDbContext>();
         await dbContext.Database.MigrateAsync(cancellationToken);
 
-        if (await dbContext.Exercises.AnyAsync(cancellationToken))
+        if (await dbContext.Exercises.AnyAsync(cancellationToken) || await dbContext.Users.AnyAsync(cancellationToken))
         {
             return;
         }
@@ -247,18 +250,17 @@ public class DatabaseInitializer : IHostedService
                 new ExerciseDescription("A combination of a squat and overhead press."))
         };
 
-        var users = new List<User>
-        {
-            new(new UserId(Guid.Parse("00000000-0000-0000-0000-000000000001")),
-                new Email("admin@jimy.io"),
-                new Username("admin"),
-                new Password("admin123"),
-                Role.Admin(),
-                DateTime.UtcNow),
-        };
+        var adminUser = new User(
+            new UserId(Guid.Parse("00000000-0000-0000-0000-000000000001")),
+            new Email("admin@jimy.io"),
+            new Username("admin"),
+            _passwordManager.Secure("admin123"),
+            Role.Admin(),
+            DateTime.UtcNow
+        );
 
         await dbContext.Exercises.AddRangeAsync(exercises, cancellationToken);
-        await dbContext.Users.AddRangeAsync(users, cancellationToken);
+        await dbContext.Users.AddAsync(adminUser, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
