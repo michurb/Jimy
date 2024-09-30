@@ -67,7 +67,6 @@ else
 
 @code {
     private IEnumerable<WorkoutPlanDto> workoutPlans;
-    private bool showCreateWorkoutPlanModal;
     private bool showEditWorkoutPlanModal;
     private bool showDeleteConfirmation;
     private WorkoutPlanDto selectedWorkoutPlan;
@@ -81,11 +80,6 @@ else
     private async Task LoadWorkoutPlans()
     {
         workoutPlans = await WorkoutPlanService.GetAllWorkoutPlansAsync();
-    }
-
-    private void OpenCreateWorkoutPlanModal()
-    {
-        showCreateWorkoutPlanModal = true;
     }
 
     private void OpenEditWorkoutPlanModal(WorkoutPlanDto plan)
