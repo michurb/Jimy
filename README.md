@@ -39,19 +39,19 @@ cd Jimy
 ```
 
 ### Running the Database Only
-If you want to run the application on your local machine you can use only the database service:
+To run the database container only, you can use the following command:
 ```bash
 docker-compose up db
 ```
 
 ### Running the Entire Application
 
-To run the application, you can use Docker Compose to manage the containers. The `docker-compose.yml` file contains the configuration for the application services.
+To run the entire application, you can use Docker Compose. The `docker-compose.yml` file contains the configuration for the application services.
 ```bash
 docker-compose up
 ```
 
-Addresses for the services:
+After the services start, you can access them at the following addresses:
 - API: `http://localhost:5080`
 - Frontend: `http://localhost:5284`
 
@@ -62,8 +62,10 @@ docker-compose down
 
 ## Technologies Used
 * ASP.NET Core: For building the RESTful API.
-* Blazor: Microsoft frontend framework for building client-side web applications.
+* Blazor: A frontend framework for building client-side web applications.
 * SQL Server: As the relational database.
+* Entity Framework Core: For data access and ORM.
+* Docker: For containerization.
 
 
 ## Project Structure
