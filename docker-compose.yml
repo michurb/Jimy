@@ -1,0 +1,41 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/Jimy.Api/Dockerfile
+    ports:
+      - "5080:8080"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - sqlserver__connectionString=Server=sqlserver,1433;Database=Jimy;User Id=sa;Password=M@sterKey78;TrustServerCertificate=True
+
+
+  blazor:
+    build:
+      context: .
+      dockerfile: src/Jimy.Blazor/Dockerfile
+    ports:
+      - "5284:8080"
+    depends_on:
+      - api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ApiBaseUrl=http://api:8080
+
+  db:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "M@sterKey78"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  sqlserverdata:
