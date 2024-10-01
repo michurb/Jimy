@@ -13,7 +13,6 @@ The Jimy Application is a comprehensive fitness and workout management platform 
   - [Running the Database Only](#running-the-database-only)
   - [Running the Entire Application](#running-the-entire-application)
   - [Stopping the Containers](#stopping-the-containers)
-- [Usage](#usage)
 - [Technologies Used](#technologies-used)
 
 ## Overview
@@ -61,7 +60,7 @@ Addresses for the services:
 docker-compose down
 ```
 
-## Techonolgies Used
+## Technologies Used
 * ASP.NET Core: For building the RESTful API.
 * Blazor: Microsoft frontend framework for building client-side web applications.
 * SQL Server: As the relational database.
